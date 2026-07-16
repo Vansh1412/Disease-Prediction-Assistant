@@ -1,7 +1,5 @@
 # MediSense AI (Disease Prediction Assistant) 🩺
 
-![HealthAI Banner](https://via.placeholder.com/1200x400/2563EB/FFFFFF?text=MediSense+AI)
-
 **MediSense AI** is a premium SaaS-style machine learning platform that predicts possible diseases based on user-provided symptoms. It analyzes user symptoms through a dynamic, conversational interface and leverages advanced machine learning models to predict potential diseases with explainable AI (XAI) insights.
 
 > **⚠️ Medical Disclaimer:** This application provides machine learning-based predictions for educational purposes only. It is not a substitute for professional medical diagnosis or treatment. Always consult a qualified healthcare professional.
