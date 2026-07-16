@@ -221,11 +221,11 @@ To use the Decision Tree and KNN models, you must download them manually:
 
 | AI Consultation | Prediction & Risk Assessment |
 |:---:|:---:|
-| ![Consultation](https://via.placeholder.com/400x300?text=Chatbot+Interface) | ![Prediction](https://via.placeholder.com/400x300?text=Risk+Meter+&+XAI) |
+| ![Consultation](screenshots/AI_CONSULTATION.png) | ![Prediction](screenshots/Prediction.png) |
 
 | Developer Dashboard | Analytics & Tracking |
 |:---:|:---:|
-| ![DevDash](https://via.placeholder.com/400x300?text=System+Metrics) | ![Analytics](https://via.placeholder.com/400x300?text=Bar+Charts) |
+| ![DevDash](screenshots/devloper_dashboard.png) | ![Analytics](screenshots/Analytics.png) |
 
 ---
 
