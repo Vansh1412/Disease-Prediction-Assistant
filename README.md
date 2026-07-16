@@ -215,7 +215,6 @@ To use the Decision Tree and KNN models, you must download them manually:
    streamlit run app/main.py
    ```
 
----
 
 ## 📸 Screenshots
 
@@ -225,10 +224,10 @@ To use the Decision Tree and KNN models, you must download them manually:
 </p>
 
 <p align="center">
-  <img src="screenshots/devloper_dashboard.png" width="48%">
+  <img src="screenshots/developer_dashboard.png" width="48%">
   <img src="screenshots/Analytics.png" width="48%">
 </p>
----
+
 
 ## 🔮 Future Scope
 
