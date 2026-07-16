@@ -1,0 +1,39 @@
+﻿venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+models/*.pkl
+
+.env
+
+.vscode/
+
+.DS_Store
+
+Thumbs.db
+data/disease_prediction/Final_Augmented_dataset_Diseases_and_Symptoms.csv
+# --- Added during release audit ---
+.venv/
+.pytest_cache/
+.ruff_cache/
+.agents/
+.idea/
+logs/
+*.log
+database.db
+.streamlit/secrets.toml
+tmp/
+temp/
+
+# Ignore very large model files specifically
+models/DecisionTree.pkl
+models/KNN.pkl
+models/general/DecisionTree.pkl
+models/general/KNN.pkl
+
+# Keep small models (do not ignore)
+!models/LogisticRegression.pkl
+!models/label_encoder.pkl
+!models/general/LogisticRegression.pkl
+!models/general/label_encoder.pkl

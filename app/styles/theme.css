@@ -1,0 +1,739 @@
+/* ============================================================
+   app/styles/theme.css  — MediSense AI Unified Design System
+   Single source of truth for all CSS variables, typography,
+   shared components, and global animations.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ── Design Tokens ─────────────────────────────────────────── */
+:root {
+    /* Brand colours */
+    --primary:          #2563EB;
+    --primary-hover:    #1D4ED8;
+    --primary-glow:     rgba(37, 99, 235, 0.18);
+
+    --accent:           #06B6D4;
+    --accent-hover:     #0891B2;
+    --accent-glow:      rgba(6, 182, 212, 0.22);
+
+    /* Backgrounds */
+    --bg-app:           #07111F;
+    --bg-surface:       #0B1220;
+    --bg-card:          rgba(17, 24, 39, 0.78);
+    --bg-glass:         rgba(11, 18, 32, 0.60);
+
+    /* Borders */
+    --border-card:      #1F2937;
+    --border-glass:     rgba(255, 255, 255, 0.08);
+
+    /* Text */
+    --text-main:        #F8FAFC;
+    --text-muted:       #94A3B8;
+    --text-inverse:     #07111F;
+
+    /* Semantic */
+    --status-success:   #22C55E;
+    --status-warning:   #F59E0B;
+    --status-error:     #EF4444;
+    --status-info:      #06B6D4;
+
+    /* Shadows */
+    --shadow-sm:   0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md:   0 4px 6px -1px rgba(0, 0, 0, 0.15), 0 2px 4px -1px rgba(0, 0, 0, 0.08);
+    --shadow-lg:   0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.08);
+    --shadow-glow: 0 0 25px -5px var(--primary-glow);
+
+    /* Transitions */
+    --t-fast:   0.15s ease;
+    --t-normal: 0.30s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Base Reset ────────────────────────────────────────────── */
+* {
+    box-sizing: border-box;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+/* ── 3D Animated Multi-Colour Blob Background ───────────────── */
+@keyframes blobFloat1 {
+    0%   { transform: translate(0,     0)    scale(1);    }
+    33%  { transform: translate(60px, -80px) scale(1.15); }
+    66%  { transform: translate(-40px, 50px) scale(0.92); }
+    100% { transform: translate(0,     0)    scale(1);    }
+}
+@keyframes blobFloat2 {
+    0%   { transform: translate(0,      0)    scale(1);   }
+    33%  { transform: translate(-70px,  60px) scale(1.2); }
+    66%  { transform: translate(50px,  -40px) scale(0.88);}
+    100% { transform: translate(0,      0)    scale(1);   }
+}
+@keyframes blobFloat3 {
+    0%   { transform: translate(0,     0)    scale(1);   }
+    33%  { transform: translate(30px,  90px) scale(1.1); }
+    66%  { transform: translate(-60px,-30px) scale(0.95);}
+    100% { transform: translate(0,     0)    scale(1);   }
+}
+@keyframes blobFloat4 {
+    0%   { transform: translate(0,      0)    scale(1);    }
+    33%  { transform: translate(-50px, -70px) scale(1.18); }
+    66%  { transform: translate(70px,   40px) scale(0.90); }
+    100% { transform: translate(0,      0)    scale(1);    }
+}
+
+/* Base dark canvas — NO overflow:hidden so blobs aren't clipped */
+.stApp {
+    background: #060a18 !important;
+    color: var(--text-main) !important;
+    min-height: 100vh !important;
+}
+
+/* Blob layer injected via JS into document.body — lives outside all Streamlit containers */
+#ms-bg-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+#ms-bg-layer .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+}
+#ms-bg-layer .blob-1 {
+    width: 560px; height: 560px;
+    top: -120px;  left: -140px;
+    background: radial-gradient(circle, rgba(79,70,229,0.75) 0%, rgba(37,99,235,0.4) 55%, transparent 75%);
+    animation: blobFloat1 18s ease-in-out infinite;
+    opacity: 0.6;
+}
+#ms-bg-layer .blob-2 {
+    width: 500px; height: 500px;
+    top: -80px;   right: -130px;
+    background: radial-gradient(circle, rgba(6,182,212,0.70) 0%, rgba(20,184,166,0.38) 55%, transparent 75%);
+    animation: blobFloat2 22s ease-in-out infinite;
+    opacity: 0.55;
+}
+#ms-bg-layer .blob-3 {
+    width: 460px; height: 460px;
+    bottom: -120px; left: 28%;
+    background: radial-gradient(circle, rgba(139,92,246,0.80) 0%, rgba(167,139,250,0.38) 55%, transparent 75%);
+    animation: blobFloat3 26s ease-in-out infinite;
+    opacity: 0.45;
+}
+#ms-bg-layer .blob-4 {
+    width: 380px; height: 380px;
+    bottom: 5%;  right: -90px;
+    background: radial-gradient(circle, rgba(245,158,11,0.65) 0%, rgba(234,88,12,0.32) 55%, transparent 75%);
+    animation: blobFloat4 20s ease-in-out infinite;
+    opacity: 0.42;
+}
+#ms-bg-layer .blob-5 {
+    width: 320px; height: 320px;
+    top: 42%;    left: 46%;
+    background: radial-gradient(circle, rgba(16,185,129,0.72) 0%, rgba(5,150,105,0.32) 55%, transparent 75%);
+    animation: blobFloat1 30s ease-in-out infinite reverse;
+    opacity: 0.28;
+}
+
+/* Ensure Streamlit content sits above the blob layer */
+[data-testid="stAppViewContainer"],
+[data-testid="stHeader"],
+[data-testid="stVerticalBlock"],
+.block-container {
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+
+/* ── General Animations ─────────────────────────────────────── */
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+@keyframes dotPulse {
+    0%, 80%, 100% { transform: scale(0); }
+    40%            { transform: scale(1.0); }
+}
+@keyframes heartbeat {
+    0%  { transform: scale(1); }
+    14% { transform: scale(1.1); }
+    28% { transform: scale(1); }
+    42% { transform: scale(1.1); }
+    70% { transform: scale(1); }
+}
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-8px); }
+}
+@keyframes typing {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-6px); }
+}
+
+/* ── Hide Streamlit Chrome ─────────────────────────────────── */
+header[data-testid="stHeader"]      { display: none !important; }
+.stDeployButton, [data-testid="stToolbar"] { display: none !important; }
+footer[data-testid="stBottomBlockContainer"] { display: none !important; }
+footer { visibility: hidden; height: 0 !important; }
+
+/* ── Custom Scrollbar ──────────────────────────────────────── */
+::-webkit-scrollbar              { width: 5px; }
+::-webkit-scrollbar-track        { background: var(--bg-app); }
+::-webkit-scrollbar-thumb        { background: var(--border-card); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover  { background: var(--text-muted); }
+
+/* ── Full Screen Layout ─────────────────────────────────────── */
+/* Force the entire Streamlit app to use 100% viewport */
+.stApp {
+    overflow-x: hidden;
+}
+[data-testid="stAppViewContainer"] {
+    max-width: 100vw !important;
+    overflow-x: hidden;
+}
+[data-testid="stMain"],
+[data-testid="stMainBlockContainer"] {
+    max-width: 100% !important;
+    padding: 0 !important;
+}
+[data-testid="stAppViewContainer"] > .main .block-container,
+[data-testid="stAppViewContainer"] > section > div.block-container {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding-top: 0 !important;
+    padding-bottom: 5rem !important;
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+}
+/* Reduce excessive Streamlit vertical spacing without collapsing content */
+[data-testid="stVerticalBlock"] { gap: 0.5rem !important; }
+[data-testid="stHorizontalBlock"] { gap: 1rem; }
+
+/* ── Typography ────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-main) !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.025em !important;
+}
+p { color: var(--text-muted); line-height: 1.6; }
+
+/* ── Streamlit Buttons ─────────────────────────────────────── */
+.stButton > button {
+    background: var(--bg-card) !important;
+    color: var(--text-main) !important;
+    border: 1px solid var(--border-glass) !important;
+    border-radius: 9px !important;
+    padding: 0.5rem 1rem !important;
+    font-weight: 500 !important;
+    transition: all var(--t-fast) !important;
+    box-shadow: none !important;
+}
+.stButton > button:hover {
+    background: var(--bg-glass) !important;
+    border-color: rgba(255,255,255,0.15) !important;
+    box-shadow: 0 0 10px rgba(255,255,255,0.04) !important;
+    transform: translateY(-1px) !important;
+}
+.stButton > button[kind="primary"] {
+    background: linear-gradient(135deg, var(--primary), var(--primary-hover)) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: 0 4px 14px 0 var(--primary-glow) !important;
+}
+.stButton > button[kind="primary"]:hover {
+    box-shadow: 0 6px 20px var(--primary-glow) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* ── Streamlit Inputs ──────────────────────────────────────── */
+.stTextInput > div > div > input,
+.stSelectbox > div > div > div,
+.stNumberInput > div > div > input {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-card) !important;
+    color: var(--text-main) !important;
+    border-radius: 10px !important;
+}
+.stTextInput > div > div > input:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 1px var(--accent) !important;
+}
+
+/* ── Streamlit Progress ────────────────────────────────────── */
+.stProgress > div > div { background-color: var(--accent) !important; }
+
+/* ── Streamlit Metrics ─────────────────────────────────────── */
+[data-testid="stMetricValue"] { font-weight: 700 !important; font-size: 2rem !important; }
+
+/* ── Streamlit Chat Messages ───────────────────────────────── */
+[data-testid="stChatMessage"]                               { background: transparent !important; }
+[data-testid="stChatMessage"] [data-testid="chatAvatarIcon-user"]      { background-color: var(--bg-card) !important; border: 1px solid var(--border-glass) !important; }
+[data-testid="stChatMessage"] [data-testid="chatAvatarIcon-assistant"] { background-color: var(--primary) !important; color: white !important; }
+
+/* ── Sidebar (legacy — hidden in production) ───────────────── */
+[data-testid="stSidebar"] {
+    background-color: var(--bg-app) !important;
+    border-right: 1px solid var(--border-card) !important;
+}
+
+/* ── Glass Card ────────────────────────────────────────────── */
+.glass-card-container {
+    background: var(--bg-card) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid var(--border-card) !important;
+    border-radius: 18px !important;
+    padding: 1.5rem !important;
+    box-shadow: var(--shadow-md), var(--shadow-glow) !important;
+    transition: transform var(--t-normal), border-color var(--t-normal), box-shadow var(--t-normal) !important;
+}
+.glass-card-container:hover {
+    transform: translateY(-3px) !important;
+    border-color: rgba(6, 182, 212, 0.22) !important;
+    box-shadow: var(--shadow-lg), 0 10px 30px -10px var(--accent-glow) !important;
+}
+/* Alias for pages using .glass-card */
+.glass-card {
+    background: var(--bg-glass) !important;
+    backdrop-filter: blur(12px) !important;
+    border: 1px solid var(--border-glass) !important;
+    border-radius: 12px !important;
+    padding: 1.5rem !important;
+    box-shadow: var(--shadow-md) !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+.glass-card:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: var(--shadow-lg), 0 0 15px 0 rgba(59, 130, 246, 0.3) !important;
+}
+
+/* ── Page Header ───────────────────────────────────────────── */
+.page-header-wrapper {
+    margin-top: 0 !important;
+    margin-bottom: 2rem !important;
+    position: relative;
+    padding: 0.25rem 0 !important;
+}
+.page-header-emoji  { font-size: 2.5rem; margin-bottom: 0.75rem; display: inline-block; }
+.page-header-title  { font-size: 2.25rem !important; margin: 0 !important; }
+.page-header-subtitle { color: var(--text-muted) !important; font-size: 1rem !important; margin-top: 0.5rem !important; }
+
+/* ── Hero Section ──────────────────────────────────────────── */
+.hero-wrapper {
+    text-align: center;
+    padding: 5rem 1.5rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+.hero-badge {
+    background: rgba(37, 99, 235, 0.1);
+    border: 1px solid rgba(37, 99, 235, 0.2);
+    color: var(--accent);
+    padding: 0.35rem 0.85rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+}
+.hero-title-main {
+    font-size: 4rem !important;
+    font-weight: 800 !important;
+    line-height: 1.1 !important;
+    margin: 0 0 1.5rem 0 !important;
+    background: linear-gradient(135deg, #FFFFFF 0%, #94A3B8 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.hero-subtitle-main {
+    font-size: 1.25rem !important;
+    color: var(--text-muted) !important;
+    line-height: 1.6 !important;
+    margin: 0 auto 2.5rem auto !important;
+    max-width: 600px;
+}
+/* Legacy aliases */
+.hero-title    { font-size: 4rem !important; font-weight: 800 !important; background: linear-gradient(135deg, #fff, #94A3B8); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: slideUp 0.8s ease-out; }
+.hero-subtitle { font-size: 1.25rem; color: var(--text-muted); animation: slideUp 0.8s ease-out 0.2s both; }
+
+/* ── SaaS Buttons (HTML links) ─────────────────────────────── */
+/* ── Navbar (static CSS for the .saas-navbar HTML class) ───── */
+.navbar-brand { display: flex; align-items: center; font-size: 1.25rem; font-weight: 700; color: var(--text-main); gap: 0.5rem; }
+.navbar-brand-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 8px var(--accent); }
+.navbar-links { display: flex; gap: 1.5rem; align-items: center; }
+.navbar-link { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color var(--t-fast); }
+.navbar-link:hover { color: var(--text-main); }
+.navbar-link-active { color: var(--accent) !important; }
+
+/* ── Sidebar Profile ───────────────────────────────────────── */
+.sidebar-profile { display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: rgba(17,24,39,0.4); border: 1px solid var(--border-card); border-radius: 12px; margin-bottom: 1.5rem; }
+.sidebar-profile-avatar { width: 40px; height: 40px; background: var(--primary); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; box-shadow: 0 0 10px var(--primary-glow); }
+.sidebar-profile-name { font-weight: 600; font-size: 0.9rem; color: var(--text-main); }
+
+/* ── Native Streamlit Bordered Containers (st.container(border=True)) ── */
+/* Replaces the old glass_card_start hack with native Streamlit support */
+[data-testid="stVerticalBlockBorderWrapper"] {
+    background: var(--bg-card) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid var(--border-card) !important;
+    border-radius: 18px !important;
+    padding: 0 !important;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.15), 0 0 25px -5px rgba(37,99,235,0.12) !important;
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s !important;
+    margin-bottom: 0.5rem !important;
+}
+
+[data-testid="stVerticalBlockBorderWrapper"]:hover {
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2), 0 4px 6px -2px rgba(0,0,0,0.1) !important;
+}
+
+[data-testid="stVerticalBlockBorderWrapper"] > div {
+    padding: 1.25rem !important;
+}
+[data-testid="stVerticalBlockBorderWrapper"] > div > div {
+    gap: 1rem !important;
+}
+
+/* ── Metric Card ───────────────────────────────────────────── */
+.metric-card-wrapper {
+    background: var(--bg-card); border: 1px solid var(--border-card);
+    border-radius: 18px; padding: 1.25rem;
+    display: flex; flex-direction: column;
+    position: relative; overflow: hidden;
+    transition: transform var(--t-normal);
+}
+.metric-card-wrapper:hover { transform: translateY(-2px); }
+.metric-card-title  { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+.metric-card-value  { font-size: 1.75rem; font-weight: 700; color: var(--text-main); line-height: 1.2; }
+.metric-card-delta  { display: flex; align-items: center; font-size: 0.8rem; font-weight: 600; margin-top: 0.5rem; gap: 0.25rem; }
+.delta-positive { color: var(--status-success); }
+.delta-negative { color: var(--status-error); }
+
+/* ── Status Badges ─────────────────────────────────────────── */
+.status-badge-container { display: inline-flex; align-items: center; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; gap: 0.35rem; border: 1px solid transparent; }
+.status-badge-success { background: rgba(34,197,94,0.10); color: var(--status-success); border-color: rgba(34,197,94,0.2); }
+.status-badge-warning { background: rgba(245,158,11,0.10); color: var(--status-warning); border-color: rgba(245,158,11,0.2); }
+.status-badge-danger  { background: rgba(239,68,68,0.10);  color: var(--status-error);   border-color: rgba(239,68,68,0.2); }
+.status-badge-info    { background: rgba(6,182,212,0.10);  color: var(--accent);         border-color: rgba(6,182,212,0.2); }
+.status-badge-dot     { width: 6px; height: 6px; border-radius: 50%; background-color: currentColor; }
+
+/* ── Section Divider ───────────────────────────────────────── */
+.section-divider-line { height: 1px; background: var(--border-card); margin: 2.5rem 0; width: 100%; }
+
+/* ── Empty State ───────────────────────────────────────────── */
+.empty-state-card { text-align: center; padding: 3rem 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px dashed var(--border-card); border-radius: 18px; background: rgba(17,24,39,0.3); }
+.empty-state-icon  { font-size: 3rem; margin-bottom: 1rem; color: var(--text-muted); }
+.empty-state-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; }
+.empty-state-desc  { font-size: 0.9rem; color: var(--text-muted); max-width: 400px; margin-bottom: 1.5rem; }
+
+/* ── Feature Cards ─────────────────────────────────────────── */
+.feature-card-wrapper { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 18px; padding: 2rem 1.5rem; height: 100%; transition: transform var(--t-normal), border-color var(--t-normal); }
+.feature-card-wrapper:hover { transform: translateY(-4px); border-color: var(--accent); }
+.feature-card-icon  { font-size: 2rem; margin-bottom: 1.25rem; color: var(--accent); }
+.feature-card-title { font-size: 1.2rem !important; margin-bottom: 0.75rem !important; }
+.feature-card-desc  { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+
+/* ── Stat Counter ──────────────────────────────────────────── */
+.stat-counter-wrapper { text-align: center; padding: 1rem; }
+.stat-counter-val { font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #FFFFFF 0%, var(--text-muted) 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.stat-counter-label { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.5rem; }
+
+/* ── Chat Bubbles ──────────────────────────────────────────── */
+.chat-message-row { display: flex; gap: 1rem; max-width: 85%; }
+.chat-message-user      { align-self: flex-end; flex-direction: row-reverse; }
+.chat-message-assistant { align-self: flex-start; }
+.chat-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+.chat-avatar-user      { background: var(--primary); color: white; }
+.chat-avatar-assistant { background: var(--accent); color: var(--text-inverse); }
+.chat-bubble-container {
+    background: rgba(17,24,39,0.6); border: 1px solid var(--border-card);
+    border-radius: 14px; padding: 0.85rem 1.15rem;
+    font-size: 0.95rem; line-height: 1.5; color: var(--text-main);
+    box-shadow: var(--shadow-sm);
+}
+.chat-message-user .chat-bubble-container { background: rgba(37,99,235,0.15); border-color: rgba(37,99,235,0.25); }
+
+/* ── Loading ───────────────────────────────────────────────── */
+.loading-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; gap: 1rem; }
+.loading-shimmer { background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0) 100%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+.dots-loader { display: flex; gap: 6px; justify-content: center; align-items: center; }
+.dots-loader div { width: 8px; height: 8px; background-color: var(--accent); border-radius: 50%; animation: dotPulse 1.2s infinite ease-in-out both; }
+.dots-loader div:nth-child(1) { animation-delay: -0.32s; }
+.dots-loader div:nth-child(2) { animation-delay: -0.16s; }
+.risk-pulse { display: inline-block; animation: heartbeat 2s infinite; }
+
+/* ── Footer — inline, only visible when scrolled to bottom ── */
+.footer-brand {
+    color: rgba(255,255,255,0.55);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+}
+.footer-text {
+    margin: 0;
+    color: rgba(255,255,255,0.3);
+    font-size: 0.70rem;
+    white-space: nowrap;
+}
+.footer-sep {
+    color: rgba(255,255,255,0.15);
+    font-size: 0.65rem;
+}
+.footer-text strong { color: rgba(255,255,255,0.5); }
+
+/* ── Navbar Container Overrides ── */
+div[data-testid="stVerticalBlock"]:has(#medisense-nav-anchor),
+div[data-testid="stVerticalBlock"][data-key="medisense-nav"] {
+    background: rgba(5, 8, 22, 0.92) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+    padding: 0.2rem 1.5rem !important;
+    margin-bottom: 1.25rem !important;
+    border-radius: 0 !important;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.4) !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 999 !important;
+    gap: 0 !important;
+}
+div[data-testid="stVerticalBlock"]:has(#medisense-nav-anchor) > div[data-testid="stHorizontalBlock"],
+div[data-testid="stVerticalBlock"][data-key="medisense-nav"] > div[data-testid="stHorizontalBlock"] {
+    align-items: center !important;
+    gap: 0.1rem !important;
+    min-height: 42px !important;
+}
+.nav-brand {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-weight: 800; font-size: 1rem; color: #fff;
+    white-space: nowrap; padding: 0;
+}
+.nav-brand-dot {
+    width: 8px; height: 8px; background: #06B6D4; border-radius: 50%;
+    box-shadow: 0 0 10px #06B6D4, 0 0 20px rgba(6,182,212,0.4);
+    flex-shrink: 0; animation: navDotPulse 3s ease-in-out infinite;
+}
+@keyframes navDotPulse {
+    0%, 100% { box-shadow: 0 0 6px #06B6D4; }
+    50% { box-shadow: 0 0 14px #06B6D4, 0 0 26px rgba(6,182,212,0.5); }
+}
+div[data-testid="stVerticalBlock"]:has(#medisense-nav-anchor) .stButton > button,
+div[data-testid="stVerticalBlock"][data-key="medisense-nav"] .stButton > button {
+    background: transparent !important; border: none !important;
+    color: rgba(255,255,255,0.5) !important; font-weight: 500 !important;
+    font-size: 0.78rem !important; padding: 0.26rem 0.45rem !important;
+    border-radius: 7px !important; transition: all 0.15s ease !important;
+    box-shadow: none !important; white-space: nowrap !important;
+    line-height: 1 !important; min-height: 0 !important;
+}
+div[data-testid="stVerticalBlock"]:has(#medisense-nav-anchor) .stButton > button:hover,
+div[data-testid="stVerticalBlock"][data-key="medisense-nav"] .stButton > button:hover {
+    color: #fff !important; background: rgba(255,255,255,0.06) !important;
+}
+div[data-testid="stVerticalBlock"]:has(#medisense-nav-anchor) .stButton > button[kind="primary"],
+div[data-testid="stVerticalBlock"][data-key="medisense-nav"] .stButton > button[kind="primary"] {
+    color: #60BDFF !important; background: rgba(37,99,235,0.14) !important;
+    border: 1px solid rgba(37,99,235,0.28) !important; font-weight: 600 !important;
+}
+div[data-testid="stVerticalBlock"]:has(#medisense-nav-anchor) [data-testid="column"]:last-child .stButton > button,
+div[data-testid="stVerticalBlock"][data-key="medisense-nav"] [data-testid="column"]:last-child .stButton > button {
+    color: rgba(239,68,68,0.65) !important;
+}
+div[data-testid="stVerticalBlock"]:has(#medisense-nav-anchor) [data-testid="column"]:last-child .stButton > button:hover,
+div[data-testid="stVerticalBlock"][data-key="medisense-nav"] [data-testid="column"]:last-child .stButton > button:hover {
+    color: #EF4444 !important; background: rgba(239,68,68,0.07) !important;
+}
+
+/* Hide empty Streamlit containers that only hold CSS */
+.element-container:has(> .stHtml > style:only-child),
+.element-container:has(> .stMarkdown > div > p > style:only-child) {
+    display: none !important;
+}
+
+/* =========================================
+   MERGED FROM MAIN.CSS
+   ========================================= */
+/* ============================================================
+   app/styles/main.css  — Layout & Page-specific overrides
+   This file adds supplementary rules on top of theme.css.
+   All design tokens live in theme.css — do not redefine :root here.
+   ============================================================ */
+
+/* ── Streamlit form override ───────────────────────────────── */
+div[data-testid="stForm"] {
+    border-radius: 18px !important;
+    background: var(--bg-glass) !important;
+    border: 1px solid var(--border-glass) !important;
+}
+
+/* ── Sidebar (hidden — we use top navbar) ──────────────────── */
+[data-testid="stSidebar"]      { display: none !important; }
+[data-testid="collapsedControl"] { display: none !important; }
+
+/* =========================================
+   MERGED FROM LANDING.CSS
+   ========================================= */
+/* ================================================================
+   landing.css — Premium Animated Landing Page
+   Target: Streamlit .stApp context (no wrapper div)
+   ================================================================ */
+
+/* ─── Keyframe Animations ─────────────────────────────────────── */
+
+@keyframes meshGradientShift {
+  0%   { background-position: 0%   50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0%   50%; }
+}
+
+@keyframes blobFloat1 {
+  0%, 100% { transform: translate(0px,   0px)  scale(1);    }
+  33%       { transform: translate(40px, -30px) scale(1.08); }
+  66%       { transform: translate(-20px, 20px) scale(0.95); }
+}
+@keyframes blobFloat2 {
+  0%, 100% { transform: translate(0px,  0px)  scale(1);   }
+  40%       { transform: translate(-50px, 30px) scale(1.1); }
+  70%       { transform: translate(30px, -20px) scale(0.9); }
+}
+@keyframes blobFloat3 {
+  0%, 100% { transform: translate(0px, 0px)   scale(1);    }
+  50%       { transform: translate(20px, 40px) scale(1.05); }
+}
+
+@keyframes particleDrift {
+  0%   { transform: translateY(110vh) rotate(0deg);    opacity: 0;   }
+  10%  {                                               opacity: 1;   }
+  90%  {                                               opacity: 0.6; }
+  100% { transform: translateY(-60px)  rotate(720deg); opacity: 0;   }
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.4; transform: scale(1);    }
+  50%       { opacity: 0.8; transform: scale(1.15); }
+}
+
+@keyframes gridFade {
+  0%, 100% { opacity: 0.04; }
+  50%       { opacity: 0.09; }
+}
+
+@keyframes dnaFloat {
+  0%   { transform: translateY(0px)   rotate(0deg)   scale(1);    opacity: 0.12; }
+  50%  { transform: translateY(-22px) rotate(180deg) scale(1.1);  opacity: 0.22; }
+  100% { transform: translateY(0px)   rotate(360deg) scale(1);    opacity: 0.12; }
+}
+
+@keyframes scanline {
+  0%   { top: -2px; }
+  100% { top: 100%;  }
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes floatCard {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-12px); }
+}
+
+@keyframes mockBarGrow {
+  from { width: 0; }
+  to   { width: var(--w, 70%); }
+}
+
+@keyframes counterUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* ─── Override Streamlit App Background ──────────────────────── */
+
+.stApp {
+  background: #050816 !important;
+  color: #F8FAFC !important;
+}
+
+/* Animated mesh overlay sitting on top of stApp background */
+.stApp::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(
+    -45deg,
+    #050816 0%,
+    #0b1220 25%,
+    #07111f 50%,
+    #050d1a 75%,
+    #050816 100%
+  );
+  background-size: 400% 400%;
+  animation: meshGradientShift 18s ease infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ─── Blobs (fixed, full screen) ─────────────────────────────── */
+
+/* ─── Grid ───────────────────────────────────────────────────── */
+
+/* ─── Glow orbs ──────────────────────────────────────────────── */
+
+/* ─── Particles ──────────────────────────────────────────────── */
+
+/* ─── DNA Icons ──────────────────────────────────────────────── */
+
+/* ─── Scanline ───────────────────────────────────────────────── */
+
+/* ─── Navbar ─────────────────────────────────────────────────── */
+
+/* ─── Hero ───────────────────────────────────────────────────── */
+
+/* ─── Mockup Float Cards ─────────────────────────────────────── */
+
+/* ─── Stats Bar ──────────────────────────────────────────────── */
+
+/* ─── Sections ───────────────────────────────────────────────── */
+
+/* ─── Feature Cards ──────────────────────────────────────────── */
+
+/* ─── How It Works ───────────────────────────────────────────── */
+
+/* ─── CTA Banner ─────────────────────────────────────────────── */
+
+/* ─── Footer ─────────────────────────────────────────────────── */
+
+/* ─── Responsive ─────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .lp-hero { padding: 4rem 1.5rem 3rem; }
+  .lp-stats { margin: 0 1rem 3rem; }
+  .lp-section { padding: 2rem 1.5rem 3rem; }
+  .lp-mockup-wrap { gap: 1rem; padding: 1.5rem 1rem 2.5rem; }
+  .lp-cta-banner { margin: 0 1rem 3rem; padding: 3rem 1.5rem; }
+  .lp-footer { flex-direction: column; align-items: center; text-align: center; }
+  .lp-step + .lp-step::before { display: none; }
+  .lp-nav-links { display: none; }
+}

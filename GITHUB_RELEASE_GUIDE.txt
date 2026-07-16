@@ -1,0 +1,40 @@
+﻿---------------------------------
+FILES TO PUSH TO GITHUB
+---------------------------------
+✓ app/
+✓ data/
+✓ docs/
+✓ images/
+✓ notebooks/
+✓ reports/
+✓ src/
+✓ tests/
+✓ .streamlit/config.toml
+✓ requirements.txt
+✓ README.md
+✓ GEMINI.md
+✓ .env.example
+✓ .gitignore
+✓ models/general/LogisticRegression.pkl
+✓ models/general/label_encoder.pkl
+
+---------------------------------
+FILES TO KEEP PRIVATE
+---------------------------------
+.env
+database.db
+API Keys
+Secrets
+Runtime caches (venv, .venv, __pycache__, .pytest_cache, logs, etc.)
+.agents/
+.idea/
+.vscode/
+
+---------------------------------
+FILES TO UPLOAD TO GOOGLE DRIVE
+---------------------------------
+DecisionTree.pkl
+KNN.pkl
+
+Place inside:
+models/general/

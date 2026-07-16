@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MediSense AI — Developer Documentation</title>
+<meta name="description" content="Complete developer documentation for MediSense AI v1.0 — architecture, ML pipeline, authentication, and module reference."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:#060b18;color:#e2e8f0;line-height:1.7;overflow-x:hidden}
+:root{--sidebar-w:280px;--topbar-h:60px;--primary:#3b82f6;--primary-light:#60a5fa;--primary-dim:rgba(59,130,246,.12);--accent:#06b6d4;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--bg:#060b18;--bg2:#0b1220;--bg3:#111827;--border:rgba(255,255,255,.07);--border-light:rgba(255,255,255,.04);--text:#e2e8f0;--text-muted:rgba(255,255,255,.45);--text-dim:rgba(255,255,255,.25);--radius:12px;--shadow:0 20px 60px rgba(0,0,0,.5);--transition:all .2s ease}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
+#topbar{position:fixed;top:0;left:0;right:0;height:var(--topbar-h);background:rgba(6,11,24,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem 0 calc(var(--sidebar-w) + 1.5rem);z-index:200}
+.brand{display:flex;align-items:center;gap:.6rem;font-weight:800;font-size:1rem;color:#fff;text-decoration:none}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 6px var(--accent)}50%{box-shadow:0 0 18px var(--accent),0 0 32px rgba(6,182,212,.3)}}
+.right{display:flex;align-items:center;gap:.75rem;position:relative}
+.version-badge{background:var(--primary-dim);border:1px solid rgba(59,130,246,.3);color:var(--primary-light);font-size:.7rem;font-weight:700;padding:.2rem .6rem;border-radius:9999px;letter-spacing:.06em;text-transform:uppercase}
+#search-box{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;padding:.35rem .8rem;color:var(--text);font-size:.83rem;font-family:'Inter',sans-serif;width:240px;outline:none;transition:var(--transition)}
+#search-box::placeholder{color:var(--text-muted)}
+#search-box:focus{border-color:var(--primary);background:rgba(59,130,246,.06)}
+#search-results{position:absolute;top:calc(var(--topbar-h) - 6px);right:0;background:var(--bg3);border:1px solid var(--border);border-radius:10px;width:340px;max-height:360px;overflow-y:auto;box-shadow:var(--shadow);z-index:300;display:none}
+.sri{padding:.65rem 1rem;cursor:pointer;border-bottom:1px solid var(--border-light);transition:var(--transition)}
+.sri:hover{background:rgba(59,130,246,.08)}
+.sri .t{font-size:.85rem;font-weight:600;color:#fff}
+.sri .s{font-size:.73rem;color:var(--text-muted)}
+#sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;padding:var(--topbar-h) 0 2rem;z-index:100}
+.sb-brand{padding:1.5rem 1.25rem .75rem;font-size:.68rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em}
+.sb-sec{padding:.4rem 0;border-bottom:1px solid var(--border-light);margin-bottom:.4rem}
+.sb-sec-title{padding:.4rem 1.25rem .2rem;font-size:.67rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em}
+.sb-link{display:block;padding:.42rem 1.25rem;color:var(--text-muted);font-size:.83rem;text-decoration:none;transition:var(--transition);border-left:2px solid transparent}
+.sb-link:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.sb-link.active{color:var(--primary-light);background:rgba(59,130,246,.08);border-left-color:var(--primary);font-weight:600}
+#main{margin-left:var(--sidebar-w);padding-top:var(--topbar-h);min-height:100vh}
+.sec{max-width:880px;padding:3rem 3rem;border-bottom:1px solid var(--border-light)}
+.sec:last-of-type{border-bottom:none}
+h1.pt{font-size:2.3rem;font-weight:900;background:linear-gradient(135deg,#fff,rgba(255,255,255,.7));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.5rem;letter-spacing:-.03em}
+.ptag{font-size:1rem;color:var(--text-muted);margin-bottom:2rem}
+h2{font-size:1.4rem;font-weight:700;color:#fff;margin:2rem 0 .9rem;letter-spacing:-.02em}
+h3{font-size:1.05rem;font-weight:600;color:#f1f5f9;margin:1.5rem 0 .6rem}
+p{color:rgba(255,255,255,.65);margin-bottom:.9rem;font-size:.91rem;line-height:1.8}
+strong{color:rgba(255,255,255,.88);font-weight:600}
+a{color:var(--primary-light);text-decoration:none}
+a:hover{text-decoration:underline}
+ul,ol{padding-left:1.4rem;color:rgba(255,255,255,.65);font-size:.91rem;line-height:2.1;margin-bottom:.9rem}
+pre{background:#0d1117;border:1px solid var(--border);border-radius:10px;padding:1.2rem 1.4rem;overflow-x:auto;position:relative;margin:1rem 0}
+code{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:#e2e8f0;line-height:1.7}
+:not(pre)>code{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:4px;padding:.1rem .35rem;font-size:.78rem;color:#93c5fd}
+.cpb{position:absolute;top:.6rem;right:.7rem;background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:6px;padding:.2rem .55rem;font-size:.7rem;color:var(--text-muted);cursor:pointer;transition:var(--transition);font-family:'Inter',sans-serif}
+.cpb:hover{background:rgba(59,130,246,.15);color:var(--primary-light)}
+.cpb.ok{color:var(--success);border-color:rgba(16,185,129,.3)}
+.kw{color:#ff79c6}.fn{color:#50fa7b}.st{color:#f1fa8c}.cm{color:#6272a4;font-style:italic}.dt{color:#bd93f9}.nb{color:#8be9fd}
+.mw{background:#0d1117;border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1.25rem 0;overflow-x:auto}
+.mermaid{text-align:center}
+.co{display:flex;gap:.9rem;align-items:flex-start;border-radius:10px;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.86rem;line-height:1.6}
+.co-icon{font-size:1.1rem;flex-shrink:0;margin-top:.05rem}
+.co.info{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2)}.co.info p{color:rgba(147,197,253,.9);margin:0}
+.co.warn{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2)}.co.warn p{color:rgba(253,230,138,.9);margin:0}
+.co.ok{background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.2)}.co.ok p{color:rgba(110,231,183,.9);margin:0}
+.co.err{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2)}.co.err p{color:rgba(252,165,165,.9);margin:0}
+table{width:100%;border-collapse:collapse;margin:1.2rem 0;font-size:.84rem}
+th{background:rgba(255,255,255,.04);padding:.7rem 1rem;text-align:left;font-weight:600;color:rgba(255,255,255,.6);font-size:.74rem;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border)}
+td{padding:.62rem 1rem;border-bottom:1px solid var(--border-light);color:rgba(255,255,255,.65)}
+tr:hover td{background:rgba(255,255,255,.02)}
+.ft{font-family:'JetBrains Mono',monospace;font-size:.79rem;background:#0d1117;border:1px solid var(--border);border-radius:10px;padding:1.2rem 1.4rem;line-height:2.0;color:#e2e8f0}
+.ft-d{color:#60a5fa;font-weight:600}.ft-f{color:rgba(255,255,255,.65)}.ft-c{color:#6272a4;font-style:italic}
+.b{display:inline-block;padding:.15rem .55rem;border-radius:4px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.bb{background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);color:#93c5fd}
+.bg{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#6ee7b7}
+.by{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:#fde68a}
+.br{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#fca5a5}
+.bp{background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.3);color:#d8b4fe}
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:1rem;margin:1.2rem 0}
+.card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:1rem 1.1rem}
+.card .ci{font-size:1.4rem;margin-bottom:.5rem}.card .ct{font-weight:700;font-size:.88rem;color:#fff;margin-bottom:.25rem}.card .cd{font-size:.76rem;color:var(--text-muted);line-height:1.55}
+.bc{display:flex;align-items:center;gap:.4rem;font-size:.77rem;color:var(--text-muted);margin-bottom:1.5rem}
+.bc a{color:var(--text-muted);text-decoration:none}.bc a:hover{color:#fff}.bc span{color:rgba(255,255,255,.2)}
+.pn{display:flex;justify-content:space-between;gap:1rem;padding:2.5rem 3rem;max-width:880px}
+.pn a{display:flex;flex-direction:column;gap:.2rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:.8rem 1.2rem;flex:1;text-decoration:none;transition:var(--transition)}
+.pn a:hover{background:rgba(59,130,246,.06);border-color:rgba(59,130,246,.2)}
+.nd{font-size:.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em}.nl{font-size:.9rem;font-weight:600;color:#fff}
+.prev{text-align:left}.next{text-align:right}
+@media(max-width:768px){#sidebar{transform:translateX(-100%);transition:transform .25s ease}#sidebar.open{transform:translateX(0)}#topbar{padding-left:1rem}#main{margin-left:0}.sec{padding:2rem 1.2rem}.pn{padding:2rem 1.2rem}#search-box{width:160px}}
+#mnt{display:none;cursor:pointer;background:none;border:none;color:var(--text);font-size:1.2rem;padding:.3rem}
+@media(max-width:768px){#mnt{display:block}}
+</style>
+</head>
+<body>
+<header id="topbar">
+  <div style="display:flex;align-items:center;gap:.75rem">
+    <button id="mnt" onclick="document.getElementById('sidebar').classList.toggle('open')">&#9776;</button>
+    <a href="#home" class="brand"><div class="dot"></div>MediSense AI</a>
+  </div>
+  <div class="right">
+    <span class="version-badge">v1.0</span>
+    <input id="search-box" type="text" placeholder="Search docs..." oninput="doSearch(this.value)"/>
+    <div id="search-results"></div>
+  </div>
+</header>
+
+<nav id="sidebar">
+  <div class="sb-brand">MediSense AI Docs</div>
+  <div class="sb-sec">
+    <div class="sb-sec-title">Getting Started</div>
+    <a href="#home" class="sb-link active">&#127968; Overview</a>
+    <a href="#architecture" class="sb-link">&#127959; Architecture</a>
+    <a href="#folder-structure" class="sb-link">&#128193; Folder Structure</a>
+    <a href="#quickstart" class="sb-link">&#128640; Quickstart</a>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-sec-title">User Flows</div>
+    <a href="#auth-flow" class="sb-link">&#128274; Authentication</a>
+    <a href="#patient-flow" class="sb-link">&#129514; Patient Flow</a>
+    <a href="#consultation-flow" class="sb-link">&#128172; Consultation</a>
+    <a href="#prediction-flow" class="sb-link">&#129504; Prediction Flow</a>
+    <a href="#report-flow" class="sb-link">&#128196; Report Flow</a>
+    <a href="#admin-flow" class="sb-link">&#128104;&#8205;&#128187; Admin Flow</a>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-sec-title">ML Pipeline</div>
+    <a href="#ml-pipeline" class="sb-link">&#9881; ML Pipeline</a>
+    <a href="#llm-pipeline" class="sb-link">&#129302; LLM Pipeline</a>
+    <a href="#recommendation" class="sb-link">&#128161; Recommendation Engine</a>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-sec-title">Module Reference</div>
+    <a href="#module-database" class="sb-link">&#128451; database.py</a>
+    <a href="#module-predictor" class="sb-link">&#128302; predictor.py</a>
+    <a href="#module-navigation" class="sb-link">&#128506; navigation.py</a>
+    <a href="#module-session" class="sb-link">&#128230; session_state.py</a>
+    <a href="#module-helpers" class="sb-link">&#128736; helpers.py</a>
+    <a href="#module-ui" class="sb-link">&#127912; ui.py</a>
+    <a href="#module-logs" class="sb-link">&#128203; logs.py</a>
+    <a href="#module-navbar" class="sb-link">&#129517; navbar.py</a>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-sec-title">Infrastructure</div>
+    <a href="#database-schema" class="sb-link">&#128194; Database Schema</a>
+    <a href="#session-flow" class="sb-link">&#128260; Session Flow</a>
+    <a href="#caching" class="sb-link">&#9889; Caching</a>
+    <a href="#security" class="sb-link">&#128737; Security</a>
+    <a href="#analytics" class="sb-link">&#128202; Analytics</a>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-sec-title">Reference</div>
+    <a href="#deployment" class="sb-link">&#128640; Deployment</a>
+    <a href="#future" class="sb-link">&#128301; Future Roadmap</a>
+  </div>
+</nav>
+
+<main id="main">
+
+<section class="sec" id="home">
+<div class="bc"><a href="#home">Docs</a><span>/</span>Overview</div>
+<h1 class="pt">MediSense AI</h1>
+<p class="ptag">Production-quality disease prediction platform &mdash; documentation for v1.0</p>
+<div class="co info"><div class="co-icon">&#8505;&#65039;</div><p>MediSense AI is a <strong>Streamlit-based medical diagnosis assistant</strong> combining three scikit-learn classifiers, a local Ollama LLM (Qwen 2.5:3B), and an explainable AI report system into one cohesive application.</p></div>
+<h2>What Is MediSense AI?</h2>
+<p>A patient describes symptoms in natural language. The app processes them through an intelligent chatbot, runs three ML models, and delivers a hospital-grade diagnostic report with XAI reasoning, specialist referrals, and lifestyle recommendations.</p>
+<div class="cg">
+  <div class="card"><div class="ci">&#128172;</div><div class="ct">NLU Consultation</div><div class="cd">Qwen 2.5:3B via Ollama extracts structured symptoms from natural conversation.</div></div>
+  <div class="card"><div class="ci">&#129504;</div><div class="ct">3-Model Ensemble</div><div class="cd">Logistic Regression, Decision Tree, and KNN trained on 247K+ records.</div></div>
+  <div class="card"><div class="ci">&#128196;</div><div class="ct">XAI Reports</div><div class="cd">AI-generated reasoning explaining each prediction in clinical language.</div></div>
+  <div class="card"><div class="ci">&#128202;</div><div class="ct">Analytics</div><div class="cd">Real-time Plotly charts tracking predictions, symptoms, and model performance.</div></div>
+  <div class="card"><div class="ci">&#128274;</div><div class="ct">Authentication</div><div class="cd">SQLite-backed user accounts with SHA-256 password hashing.</div></div>
+  <div class="card"><div class="ci">&#9889;</div><div class="ct">Emergency Detection</div><div class="cd">Rule-based escalation to specialist before ML inference completes.</div></div>
+</div>
+<h2>Tech Stack</h2>
+<table>
+<thead><tr><th>Layer</th><th>Technology</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td><span class="b bb">Frontend</span></td><td>Streamlit 1.58</td><td>UI framework &mdash; pages, widgets, layout</td></tr>
+<tr><td><span class="b bp">ML</span></td><td>scikit-learn 1.7</td><td>Disease classifiers (LR, DT, KNN)</td></tr>
+<tr><td><span class="b bg">LLM</span></td><td>Ollama + Qwen 2.5:3B</td><td>Symptom extraction and XAI reasoning</td></tr>
+<tr><td><span class="b by">Data</span></td><td>pandas 2.3 + numpy 2.3</td><td>Feature vector construction</td></tr>
+<tr><td><span class="b br">DB</span></td><td>SQLite (WAL mode)</td><td>Users, predictions, preferences</td></tr>
+<tr><td><span class="b bb">Charts</span></td><td>Plotly 6.8</td><td>Interactive analytics visualisations</td></tr>
+</tbody>
+</table>
+</section>
+
+<section class="sec" id="architecture">
+<div class="bc"><a href="#home">Docs</a><span>/</span>Architecture</div>
+<h1 class="pt">System Architecture</h1>
+<p class="ptag">How components are organised and communicate.</p>
+<div class="mw"><div class="mermaid">
+graph TD
+  Browser["Browser"] --> ST["Streamlit Runtime\napp/main.py"]
+  ST --> Pages["Page Router\nnavigation.py"]
+  Pages --> Auth["Auth\nauth.py"]
+  Pages --> Dashboard["Dashboard\ndashboard.py"]
+  Pages --> Consult["Consultation\nconsultation.py"]
+  Pages --> Predict["Prediction\nprediction.py"]
+  Pages --> Report["Report\nreport.py"]
+  Auth --> DB["SQLite DB\ndatabase.db"]
+  Dashboard --> DB
+  Predict --> Predictor["ML Predictor\npredictor.py"]
+  Predictor --> Rec["Recommendation Engine"]
+  Consult --> LLM["LLM Engine\nllm_engine.py"]
+  LLM --> Ollama["Ollama\nlocalhost:11434"]
+  Report --> Predictor
+  Report --> Rec
+  style Browser fill:#1e3a5f,stroke:#3b82f6,color:#fff
+  style DB fill:#1a3320,stroke:#10b981,color:#fff
+  style Ollama fill:#2d1a44,stroke:#a855f7,color:#fff
+</div></div>
+<h2>Layered Design</h2>
+<table>
+<thead><tr><th>Layer</th><th>Location</th><th>Responsibility</th></tr></thead>
+<tbody>
+<tr><td><strong>Presentation</strong></td><td><code>app/pages/</code>, <code>app/components/</code></td><td>All Streamlit UI, pages, widgets</td></tr>
+<tr><td><strong>Business Logic</strong></td><td><code>src/prediction/</code>, <code>src/chatbot/</code>, <code>src/recommendation/</code></td><td>ML models, LLM orchestration, recommendations</td></tr>
+<tr><td><strong>Data</strong></td><td><code>app/utils/database.py</code>, <code>database.db</code></td><td>SQLite persistence for users and predictions</td></tr>
+</tbody>
+</table>
+</section>
+
+<section class="sec" id="folder-structure">
+<div class="bc"><a href="#home">Docs</a><span>/</span>Folder Structure</div>
+<h1 class="pt">Folder Structure</h1>
+<div class="ft">
+<span class="ft-d">Disease-Prediction-Assistant/</span><br>
+&#9500;&#9472;&#9472; <span class="ft-d">app/</span>   <span class="ft-c"># Streamlit application code</span><br>
+&#9474;   &#9500;&#9472;&#9472; <span class="ft-f">main.py</span>   <span class="ft-c"># Entry point: page_config, routing, CSS injection</span><br>
+&#9474;   &#9500;&#9472;&#9472; <span class="ft-d">components/</span>   <span class="ft-c"># Reusable UI components</span><br>
+&#9474;   &#9474;   &#9500;&#9472;&#9472; <span class="ft-f">navbar.py</span>   <span class="ft-c"># Sticky top navigation</span><br>
+&#9474;   &#9474;   &#9500;&#9472;&#9472; <span class="ft-f">footer.py</span>   <span class="ft-c"># Page footer</span><br>
+&#9474;   &#9474;   &#9492;&#9472;&#9472; <span class="ft-f">logs_modal.py</span>   <span class="ft-c"># Activity log modal</span><br>
+&#9474;   &#9500;&#9472;&#9472; <span class="ft-d">pages/</span>   <span class="ft-c"># One file per route</span><br>
+&#9474;   &#9474;   &#9500;&#9472;&#9472; <span class="ft-f">landing.py</span>   <span class="ft-c"># Marketing landing (unauthenticated)</span><br>
+&#9474;   &#9474;   &#9500;&#9472;&#9472; <span class="ft-f">auth.py</span>   <span class="ft-c"># Login / Registration</span><br>
+&#9474;   &#9474;   &#9500;&#9472;&#9472; <span class="ft-f">dashboard.py</span>   <span class="ft-c"># Main dashboard: metrics, charts, logs</span><br>
+&#9474;   &#9474;   &#9500;&#9472;&#9472; <span class="ft-f">consultation.py</span>   <span class="ft-c"># AI chatbot symptom intake</span><br>
+&#9474;   &#9474;   &#9500;&#9472;&#9472; <span class="ft-f">prediction.py</span>   <span class="ft-c"># ML prediction form and results</span><br>
+&#9474;   &#9474;   &#9500;&#9472;&#9472; <span class="ft-f">report.py</span>   <span class="ft-c"># Printable clinical report</span><br>
+&#9474;   &#9474;   &#9500;&#9472;&#9472; <span class="ft-f">history.py</span>   <span class="ft-c"># Prediction history table</span><br>
+&#9474;   &#9474;   &#9500;&#9472;&#9472; <span class="ft-f">analytics.py</span>   <span class="ft-c"># Plotly analytics charts</span><br>
+&#9474;   &#9474;   &#9492;&#9472;&#9472; <span class="ft-f">developer.py</span>   <span class="ft-c"># Hidden dev dashboard (?dev=true)</span><br>
+&#9474;   &#9500;&#9472;&#9472; <span class="ft-d">styles/</span><br>
+&#9474;   &#9474;   &#9492;&#9472;&#9472; <span class="ft-f">theme.css</span>   <span class="ft-c"># Global CSS design tokens</span><br>
+&#9474;   &#9492;&#9472;&#9472; <span class="ft-d">utils/</span>   <span class="ft-c"># Shared utilities</span><br>
+&#9474;       &#9500;&#9472;&#9472; <span class="ft-f">database.py</span>   <span class="ft-c"># SQLite CRUD operations</span><br>
+&#9474;       &#9500;&#9472;&#9472; <span class="ft-f">helpers.py</span>   <span class="ft-c"># CSS loader, clinical reasoning formatter</span><br>
+&#9474;       &#9500;&#9472;&#9472; <span class="ft-f">logs.py</span>   <span class="ft-c"># Activity log builder</span><br>
+&#9474;       &#9500;&#9472;&#9472; <span class="ft-f">navigation.py</span>   <span class="ft-c"># Page registry and routing helpers</span><br>
+&#9474;       &#9500;&#9472;&#9472; <span class="ft-f">session_state.py</span>   <span class="ft-c"># Session initialisation defaults</span><br>
+&#9474;       &#9492;&#9472;&#9472; <span class="ft-f">ui.py</span>   <span class="ft-c"># UI component library</span><br>
+&#9500;&#9472;&#9472; <span class="ft-d">src/</span>   <span class="ft-c"># Business logic: ML, LLM, recommendation</span><br>
+&#9474;   &#9500;&#9472;&#9472; <span class="ft-d">prediction/</span><br>
+&#9474;   &#9474;   &#9492;&#9472;&#9472; <span class="ft-f">predictor.py</span>   <span class="ft-c"># Model loading, vectorisation, inference</span><br>
+&#9474;   &#9500;&#9472;&#9472; <span class="ft-d">chatbot/</span><br>
+&#9474;   &#9474;   &#9500;&#9472;&#9472; <span class="ft-f">llm_engine.py</span>   <span class="ft-c"># Ollama API wrapper</span><br>
+&#9474;   &#9474;   &#9500;&#9472;&#9472; <span class="ft-f">prediction_bridge.py</span>   <span class="ft-c"># Chatbot to ML to LLM explanation</span><br>
+&#9474;   &#9474;   &#9492;&#9472;&#9472; <span class="ft-f">symptom_parser.py</span>   <span class="ft-c"># Symptom extraction</span><br>
+&#9474;   &#9492;&#9472;&#9472; <span class="ft-d">recommendation/</span><br>
+&#9474;       &#9492;&#9472;&#9472; <span class="ft-f">recommendation_engine.py</span>   <span class="ft-c"># Rule-based recommendations</span><br>
+&#9500;&#9472;&#9472; <span class="ft-d">models/general/</span>   <span class="ft-c"># Trained .pkl model files</span><br>
+&#9500;&#9472;&#9472; <span class="ft-d">data/</span>   <span class="ft-c"># CSV datasets</span><br>
+&#9500;&#9472;&#9472; <span class="ft-f">database.db</span>   <span class="ft-c"># SQLite database (WAL mode)</span><br>
+&#9492;&#9472;&#9472; <span class="ft-f">requirements.txt</span>   <span class="ft-c"># Python dependencies</span>
+</div>
+</section>
+
+<section class="sec" id="quickstart">
+<div class="bc"><a href="#home">Docs</a><span>/</span>Quickstart</div>
+<h1 class="pt">Quickstart</h1>
+<p class="ptag">Get MediSense AI running in under 5 minutes.</p>
+<h2>Prerequisites</h2>
+<ul><li>Python 3.11+</li><li>Ollama installed and running: <code>ollama serve</code></li><li>Qwen model pulled: <code>ollama pull qwen2.5:3b</code></li><li>Pre-trained models in <code>models/general/</code></li></ul>
+<h2>Installation</h2>
+<pre><button class="cpb" onclick="cp(this)">Copy</button><code>cd Disease-Prediction-Assistant
+python -m venv venv
+venv\Scripts\activate         # Windows
+source venv/bin/activate      # macOS/Linux
+pip install -r requirements.txt
+streamlit run app/main.py</code></pre>
+<h2>Developer Mode</h2>
+<pre><button class="cpb" onclick="cp(this)">Copy</button><code>http://localhost:8501/?dev=true</code></pre>
+<div class="co warn"><div class="co-icon">&#9888;&#65039;</div><p>Ollama must be running on port <strong>11434</strong> for consultation and XAI reasoning features. ML prediction works without Ollama.</p></div>
+</section>
+
+<section class="sec" id="auth-flow">
+<div class="bc"><a href="#home">Docs</a><span>/</span>Authentication</div>
+<h1 class="pt">Authentication Flow</h1>
+<div class="mw"><div class="mermaid">
+sequenceDiagram
+  participant U as User
+  participant LP as Landing Page
+  participant Auth as Auth Page
+  participant DB as SQLite DB
+  participant SS as Session State
+  participant App as Dashboard
+  U->>LP: Opens app (not logged in)
+  LP->>SS: Sets auth_mode on CTA click
+  SS->>Auth: Rerun triggers Auth page
+  U->>Auth: Submits credentials
+  Auth->>DB: login_user(email, sha256(pwd))
+  DB-->>Auth: (True, user_dict)
+  Auth->>SS: logged_in=True, user set
+  Auth->>App: st.rerun() - Dashboard shown
+</div></div>
+<h2>Password Hashing</h2>
+<pre><button class="cpb" onclick="cp(this)">Copy</button><code><span class="cm"># app/utils/database.py</span>
+<span class="kw">def</span> <span class="fn">hash_password</span>(password: <span class="dt">str</span>) -> <span class="dt">str</span>:
+    <span class="kw">return</span> hashlib.sha256(password.encode()).hexdigest()</code></pre>
+</section>
+
+<section class="sec" id="patient-flow">
+<div class="bc"><a href="#home">Docs</a><span>/</span>Patient Flow</div>
+<h1 class="pt">Patient Flow</h1>
+<div class="mw"><div class="mermaid">
+graph LR
+  A["Login"] --> B["Dashboard"]
+  B --> C["Consultation\nAI Chat"]
+  C --> D["Symptoms Extracted"]
+  D --> E["ML Prediction\nTop-5 Diseases"]
+  E --> F["Clinical Report\nXAI Reasoning"]
+  F --> G["History Saved"]
+  G --> H["Analytics Updated"]
+  style A fill:#1e3a5f,stroke:#3b82f6,color:#fff
+  style F fill:#1a3320,stroke:#10b981,color:#fff
+</div></div>
+</section>
+
+<section class="sec" id="consultation-flow">
+<div class="bc"><a href="#home">Docs</a><span>/</span>Consultation</div>
+<h1 class="pt">Consultation Flow</h1>
+<div class="mw"><div class="mermaid">
+sequenceDiagram
+  participant P as Patient
+  participant UI as consultation.py
+  participant LLM as llm_engine.py
+  participant Ollama as Ollama Qwen 2.5:3B
+  participant SS as Session State
+  P->>UI: Types symptom description
+  UI->>SS: Appends to messages[]
+  UI->>LLM: ask_llm(messages, stream=True)
+  LLM->>Ollama: POST /api/chat
+  Ollama-->>LLM: Streaming tokens
+  LLM-->>UI: Yields streamed response
+  UI->>P: Displays token by token
+  UI->>SS: detected_symptoms updated
+</div></div>
+</section>
+
+<section class="sec" id="prediction-flow">
+<div class="bc"><a href="#home">Docs</a><span>/</span>Prediction</div>
+<h1 class="pt">Prediction Pipeline</h1>
+<div class="mw"><div class="mermaid">
+flowchart TD
+  A["User Symptoms"] --> B["load_feature_index()"]
+  B --> C["Binary Feature Vector\nnp.zeros(377)"]
+  C --> D["model.predict_proba()"]
+  D --> E["Top 5 class indices"]
+  E --> F["encoder.inverse_transform\nindex to disease name"]
+  F --> G["Results: name + confidence"]
+  G --> H["get_recommendations()"]
+  H --> I["ask_llm() XAI reasoning"]
+  I --> J["Final result dict"]
+  style A fill:#1e3a5f,stroke:#3b82f6,color:#fff
+  style J fill:#1a3320,stroke:#10b981,color:#fff
+</div></div>
+<div class="co ok"><div class="co-icon">&#9989;</div><p>All three models are loaded <strong>once per process</strong> via <code>@st.cache_resource</code> and shared across all user sessions.</p></div>
+</section>
+
+<section class="sec" id="report-flow">
+<div class="bc"><a href="#home">Docs</a><span>/</span>Report</div>
+<h1 class="pt">Report Generation</h1>
+<p>The Report page reads <code>st.session_state.prediction_results</code> and assembles a complete HTML document rendered via <code>st.markdown(html.strip(), unsafe_allow_html=True)</code>.</p>
+<div class="co info"><div class="co-icon">&#8505;&#65039;</div><p>The HTML is pre-built and <strong>.strip()</strong>'d before passing to <code>st.markdown</code>. Required because CommonMark treats 4+ leading spaces as code blocks.</p></div>
+<table>
+<thead><tr><th>Section</th><th>Source</th></tr></thead>
+<tbody>
+<tr><td>Header (Report ID)</td><td>Generated UUID + timestamp</td></tr>
+<tr><td>Patient Info</td><td><code>st.session_state.patient_data</code></td></tr>
+<tr><td>Diagnostic Impression</td><td><code>prediction_results["disease"]</code>, confidence, body system</td></tr>
+<tr><td>Clinical Reasoning</td><td><code>format_clinical_reasoning(xai_reasoning)</code></td></tr>
+<tr><td>Recommendations</td><td>specialist, home_care, lifestyle from recommendation engine</td></tr>
+</tbody>
+</table>
+</section>
+
+<section class="sec" id="admin-flow">
+<div class="bc"><a href="#home">Docs</a><span>/</span>Admin</div>
+<h1 class="pt">Admin / Developer Flow</h1>
+<pre><button class="cpb" onclick="cp(this)">Copy</button><code>http://localhost:8501/?dev=true</code></pre>
+<p>The Developer Dashboard is a <code>dev_only=True</code> page. It only appears in the navbar when <code>?dev=true</code> is in the URL. It shows dataset metrics, model accuracy, training date, and system environment info.</p>
+<div class="co warn"><div class="co-icon">&#9888;&#65039;</div><p>No server-side authentication gate on the developer page. Add role-based access control for production deployments.</p></div>
+</section>
+
+<section class="sec" id="ml-pipeline">
+<div class="bc"><a href="#home">Docs</a><span>/</span>ML Pipeline</div>
+<h1 class="pt">ML Pipeline</h1>
+<table>
+<thead><tr><th>Property</th><th>Value</th></tr></thead>
+<tbody>
+<tr><td>Dataset</td><td><code>data/disease_prediction/Final_Augmented_dataset_Diseases_and_Symptoms.csv</code></td></tr>
+<tr><td>Training rows</td><td>247,000+</td></tr>
+<tr><td>Feature columns</td><td>377 binary symptom flags</td></tr>
+<tr><td>Disease classes</td><td>754 unique diseases</td></tr>
+</tbody>
+</table>
+<pre><button class="cpb" onclick="cp(this)">Copy</button><code><span class="cm"># src/prediction/predictor.py</span>
+@st.cache_resource   <span class="cm"># Loaded ONCE, shared across all sessions</span>
+<span class="kw">def</span> <span class="fn">load_models</span>():
+    models = {
+        <span class="st">"Logistic Regression"</span>: joblib.load(MODEL_DIR / <span class="st">"LogisticRegression.pkl"</span>),
+        <span class="st">"Decision Tree"</span>:      joblib.load(MODEL_DIR / <span class="st">"DecisionTree.pkl"</span>),
+        <span class="st">"KNN"</span>:                 joblib.load(MODEL_DIR / <span class="st">"KNN.pkl"</span>)
+    }
+    encoder = joblib.load(MODEL_DIR / <span class="st">"label_encoder.pkl"</span>)
+    <span class="kw">return</span> models, encoder</code></pre>
+</section>
+
+<section class="sec" id="llm-pipeline">
+<div class="bc"><a href="#home">Docs</a><span>/</span>LLM Pipeline</div>
+<h1 class="pt">LLM Pipeline</h1>
+<table>
+<thead><tr><th>Use Case</th><th>Where</th><th>Mode</th></tr></thead>
+<tbody>
+<tr><td>Consultation chat</td><td><code>consultation.py</code></td><td>stream=True &mdash; tokens streamed to UI</td></tr>
+<tr><td>XAI reasoning</td><td><code>prediction_bridge.py</code></td><td>stream=False &mdash; complete string awaited</td></tr>
+</tbody>
+</table>
+<pre><button class="cpb" onclick="cp(this)">Copy</button><code><span class="cm"># src/chatbot/llm_engine.py</span>
+<span class="kw">import</span> ollama
+<span class="kw">def</span> <span class="fn">ask_llm</span>(messages, stream=<span class="nb">True</span>):
+    response = ollama.chat(model=<span class="st">"qwen2.5:3b"</span>, messages=messages, stream=stream)
+    <span class="kw">if</span> stream:
+        <span class="kw">yield from</span> response
+    <span class="kw">else</span>:
+        <span class="kw">return</span> response[<span class="st">"message"</span>][<span class="st">"content"</span>]</code></pre>
+</section>
+
+<section class="sec" id="recommendation">
+<div class="bc"><a href="#home">Docs</a><span>/</span>Recommendation Engine</div>
+<h1 class="pt">Recommendation Engine</h1>
+<p><code>src/recommendation/recommendation_engine.py</code> &mdash; takes a disease name, returns specialist, severity, emergency level, risk colour, body system, home care, and lifestyle advice.</p>
+<div class="cg">
+  <div class="card"><div class="ci">&#129728;</div><div class="ct">Cardiovascular</div><div class="cd">heart, cardio, chest &rarr; Emergency / Red / Cardiologist</div></div>
+  <div class="card"><div class="ci">&#129729;</div><div class="ct">Respiratory</div><div class="cd">asthma, lung, pneumonia &rarr; High / Orange / Pulmonologist</div></div>
+  <div class="card"><div class="ci">&#129504;</div><div class="ct">Neurological</div><div class="cd">brain, stroke, seizure &rarr; Emergency / Red / Neurologist</div></div>
+  <div class="card"><div class="ci">&#129514;</div><div class="ct">Endocrine</div><div class="cd">diabetes, thyroid &rarr; Moderate / Yellow / Endocrinologist</div></div>
+  <div class="card"><div class="ci">&#129730;</div><div class="ct">Infectious</div><div class="cd">fever, cold, flu &rarr; Mild / Green / GP</div></div>
+  <div class="card"><div class="ci">&#129464;</div><div class="ct">Musculoskeletal</div><div class="cd">bone, joint, arthritis &rarr; Low / Yellow / Orthopedist</div></div>
+</div>
+</section>
+
+<section class="sec" id="module-database">
+<div class="bc"><a href="#home">Docs</a><span>/</span>Module Reference<span>/</span>database.py</div>
+<h1 class="pt">database.py</h1>
+<p class="ptag"><code>app/utils/database.py</code> &mdash; All SQLite CRUD operations.</p>
+<pre><button class="cpb" onclick="cp(this)">Copy</button><code><span class="kw">def</span> <span class="fn">get_connection</span>() -> sqlite3.Connection:
+    conn = sqlite3.connect(DB_PATH, check_same_thread=<span class="nb">False</span>, timeout=<span class="nb">10</span>)
+    conn.execute(<span class="st">"PRAGMA journal_mode=WAL"</span>)    <span class="cm"># Crash-safe write-ahead log</span>
+    conn.execute(<span class="st">"PRAGMA busy_timeout=5000"</span>)   <span class="cm"># Wait up to 5s on lock</span>
+    conn.execute(<span class="st">"PRAGMA foreign_keys=ON"</span>)     <span class="cm"># Enforce FK constraints</span>
+    <span class="kw">return</span> conn</code></pre>
+<table>
+<thead><tr><th>Function</th><th>Input</th><th>Output</th></tr></thead>
+<tbody>
+<tr><td><code>init_db()</code></td><td>&mdash;</td><td>Creates tables. <code>@lru_cache</code> ensures single run per process.</td></tr>
+<tr><td><code>register_user(name, email, password)</code></td><td>str &times; 3</td><td><code>(True, user_id)</code> or <code>(False, error)</code></td></tr>
+<tr><td><code>login_user(email, password)</code></td><td>str &times; 2</td><td><code>(True, user_dict)</code> or <code>(False, error)</code></td></tr>
+<tr><td><code>save_prediction(...)</code></td><td>int, list, str, float, str</td><td>None</td></tr>
+<tr><td><code>get_user_predictions(user_id)</code></td><td>int</td><td>list[dict]</td></tr>
+</tbody>
+</table>
+</section>
+
+<section class="sec" id="module-predictor">
+<div class="bc"><a href="#home">Docs</a><span>/</span>Module Reference<span>/</span>predictor.py</div>
+<h1 class="pt">predictor.py</h1>
+<p class="ptag"><code>src/prediction/predictor.py</code> &mdash; Model loading and disease inference.</p>
+<table>
+<thead><tr><th>Function</th><th>Returns</th><th>Cached</th></tr></thead>
+<tbody>
+<tr><td><code>load_models()</code></td><td>(models_dict, encoder)</td><td>@st.cache_resource</td></tr>
+<tr><td><code>load_feature_names()</code></td><td>list[str]</td><td>@st.cache_data</td></tr>
+<tr><td><code>load_feature_index()</code></td><td>dict[str, int]</td><td>@st.cache_data</td></tr>
+<tr><td><code>extract_symptoms_from_text(text, all_symptoms)</code></td><td>list[str]</td><td>No</td></tr>
+<tr><td><code>predict_disease(model_name, symptoms)</code></td><td>(results, error)</td><td>No</td></tr>
+</tbody>
+</table>
+</section>
+
+<section class="sec" id="module-navigation">
+<div class="bc"><a href="#home">Docs</a><span>/</span>Module Reference<span>/</span>navigation.py</div>
+<h1 class="pt">navigation.py</h1>
+<p class="ptag"><code>app/utils/navigation.py</code> &mdash; Page registry and routing.</p>
+<pre><button class="cpb" onclick="cp(this)">Copy</button><code>@dataclass(frozen=<span class="nb">True</span>)
+<span class="kw">class</span> <span class="fn">PageConfig</span>:
+    page_id:  <span class="dt">str</span>
+    label:    <span class="dt">str</span>
+    module:   <span class="dt">str</span>       <span class="cm"># e.g. "app.pages.prediction"</span>
+    function: <span class="dt">str</span>       <span class="cm"># e.g. "render_prediction"</span>
+    dev_only: <span class="dt">bool</span> = <span class="nb">False</span></code></pre>
+</section>
+
+<section class="sec" id="module-session">
+<div class="bc"><a href="#home">Docs</a><span>/</span>Module Reference<span>/</span>session_state.py</div>
+<h1 class="pt">session_state.py</h1>
+<table>
+<thead><tr><th>Key</th><th>Type</th><th>Default</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td><code>logged_in</code></td><td>bool</td><td>False</td><td>Gate for authenticated pages</td></tr>
+<tr><td><code>user</code></td><td>dict|None</td><td>&mdash;</td><td>id, name, email of current user</td></tr>
+<tr><td><code>current_page</code></td><td>str</td><td>dashboard</td><td>Active page for navbar</td></tr>
+<tr><td><code>messages</code></td><td>list[dict]</td><td>[welcome]</td><td>Chatbot conversation history</td></tr>
+<tr><td><code>patient_data</code></td><td>dict</td><td>empty</td><td>Symptoms, age, pain level</td></tr>
+<tr><td><code>prediction_results</code></td><td>dict|None</td><td>None</td><td>Last prediction output</td></tr>
+<tr><td><code>prediction_history</code></td><td>list[dict]</td><td>[]</td><td>All predictions this session</td></tr>
+<tr><td><code>analytics</code></td><td>dict</td><td>zeroed</td><td>Symptom/disease frequency maps</td></tr>
+</tbody>
+</table>
+</section>
+
+<section class="sec" id="module-helpers">
+<div class="bc"><a href="#home">Docs</a><span>/</span>Module Reference<span>/</span>helpers.py</div>
+<h1 class="pt">helpers.py</h1>
+<p>Provides <code>load_css()</code> (reads and injects theme.css, cached via <code>@st.cache_data</code>) and <code>format_clinical_reasoning()</code> (converts LLM markdown to professional HTML cards with icons, justified text, and inline bold support).</p>
+</section>
+
+<section class="sec" id="module-ui">
+<div class="bc"><a href="#home">Docs</a><span>/</span>Module Reference<span>/</span>ui.py</div>
+<h1 class="pt">ui.py</h1>
+<p class="ptag"><code>app/utils/ui.py</code> &mdash; Shared UI component library (15KB).</p>
+<table>
+<thead><tr><th>Function</th><th>Renders</th></tr></thead>
+<tbody>
+<tr><td><code>escape_html(value)</code></td><td>HTML-escapes any value. Required for all user content in HTML contexts.</td></tr>
+<tr><td><code>render_html(html)</code></td><td>Core renderer &mdash; collapses multiline HTML, calls st.markdown</td></tr>
+<tr><td><code>PageHeader(emoji, title, subtitle)</code></td><td>Standardised page title section</td></tr>
+<tr><td><code>PageLayout(emoji, title, subtitle)</code></td><td>Context manager: header + container</td></tr>
+<tr><td><code>GlassCard(title, content, subtitle)</code></td><td>Glassmorphism card in one st.markdown call</td></tr>
+<tr><td><code>MetricCard(title, value, delta)</code></td><td>KPI metric card with optional delta</td></tr>
+<tr><td><code>EmptyState(title, body, icon)</code></td><td>Centered empty-state placeholder</td></tr>
+<tr><td><code>StatusBadge(label, status_type)</code></td><td>Coloured pill badge: success/warning/error/info</td></tr>
+<tr><td><code>LoadingSpinner()</code></td><td>Three-dot animated loading indicator</td></tr>
+<tr><td><code>ChatBubble(message, is_user)</code></td><td>Chat message row with avatar and bubble</td></tr>
+</tbody>
+</table>
+</section>
+
+<section class="sec" id="module-logs">
+<div class="bc"><a href="#home">Docs</a><span>/</span>Module Reference<span>/</span>logs.py</div>
+<h1 class="pt">logs.py</h1>
+<p>Builds chronological <code>LogEntry</code> objects from: boot sequence, real prediction history from session state, and simulated heartbeat events. Provides <code>logs_to_json()</code> and <code>logs_to_csv()</code> for export.</p>
+</section>
+
+<section class="sec" id="module-navbar">
+<div class="bc"><a href="#home">Docs</a><span>/</span>Module Reference<span>/</span>navbar.py</div>
+<h1 class="pt">navbar.py</h1>
+<p>Uses <code>st.columns + st.button</code> to render navigation. This preserves all session_state on navigation (no full-page reload). Active page gets <code>type="primary"</code>. Developer page hidden unless <code>?dev=true</code>.</p>
+</section>
+
+<section class="sec" id="database-schema">
+<div class="bc"><a href="#home">Docs</a><span>/</span>Infrastructure<span>/</span>Database</div>
+<h1 class="pt">Database Schema</h1>
+<div class="mw"><div class="mermaid">
+erDiagram
+  users {
+    INTEGER id PK
+    TEXT name
+    TEXT email UK
+    TEXT password_hash
+    TEXT created_at
+    TEXT last_login
+  }
+  predictions {
+    INTEGER id PK
+    INTEGER user_id FK
+    TEXT date
+    TEXT symptoms
+    TEXT disease
+    REAL confidence
+    TEXT model_used
+  }
+  preferences {
+    INTEGER user_id PK_FK
+    TEXT theme
+    INTEGER notifications
+  }
+  users ||--o{ predictions : "has"
+  users ||--o| preferences : "has"
+</div></div>
+</section>
+
+<section class="sec" id="session-flow">
+<div class="bc"><a href="#home">Docs</a><span>/</span>Infrastructure<span>/</span>Session</div>
+<h1 class="pt">Session Flow</h1>
+<div class="mw"><div class="mermaid">
+stateDiagram-v2
+  [*] --> Unauthenticated : App starts
+  Unauthenticated --> Landing : no auth_mode
+  Unauthenticated --> Auth : auth_mode set
+  Landing --> Auth : CTA clicked
+  Auth --> Dashboard : login succeeds
+  Dashboard --> Consultation : nav click
+  Consultation --> Prediction : symptoms extracted
+  Prediction --> Report : results set
+  Dashboard --> [*] : Logout
+</div></div>
+</section>
+
+<section class="sec" id="caching">
+<div class="bc"><a href="#home">Docs</a><span>/</span>Infrastructure<span>/</span>Caching</div>
+<h1 class="pt">Caching Strategy</h1>
+<table>
+<thead><tr><th>Function</th><th>Decorator</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td><code>load_models()</code></td><td>@st.cache_resource</td><td>Sklearn objects must persist without serialisation</td></tr>
+<tr><td><code>load_feature_names()</code></td><td>@st.cache_data</td><td>CSV read is expensive; columns are immutable</td></tr>
+<tr><td><code>load_feature_index()</code></td><td>@st.cache_data</td><td>Derived from feature names; also immutable</td></tr>
+<tr><td><code>_read_css()</code></td><td>@st.cache_data</td><td>54KB CSS file read once per process</td></tr>
+<tr><td><code>init_db()</code></td><td>@lru_cache</td><td>Table creation only needed once per process</td></tr>
+</tbody>
+</table>
+<div class="co info"><div class="co-icon">&#8505;&#65039;</div><p><code>cache_resource</code> shares objects across ALL sessions. <code>cache_data</code> serialises and gives each caller their own copy. Use cache_resource for models; cache_data for dataframes and primitives.</p></div>
+</section>
+
+<section class="sec" id="security">
+<div class="bc"><a href="#home">Docs</a><span>/</span>Infrastructure<span>/</span>Security</div>
+<h1 class="pt">Security</h1>
+<table>
+<thead><tr><th>Control</th><th>Implementation</th></tr></thead>
+<tbody>
+<tr><td>Password storage</td><td>SHA-256 hash &mdash; no plaintext stored</td></tr>
+<tr><td>SQL injection</td><td>All queries use parameterised placeholders (<code>?</code>)</td></tr>
+<tr><td>HTML injection</td><td><code>escape_html()</code> used for all user data in HTML contexts</td></tr>
+<tr><td>Authenticated routing</td><td><code>main.py</code> gates on <code>st.session_state.logged_in</code></td></tr>
+<tr><td>Data locality</td><td>All data stays on local machine</td></tr>
+</tbody>
+</table>
+<div class="co err"><div class="co-icon">&#128680;</div><p><strong>No salt on password hashes.</strong> For real patient data, replace SHA-256 with bcrypt or argon2 with per-user salts.</p></div>
+<div class="co warn"><div class="co-icon">&#9888;&#65039;</div><p><strong>No RBAC on developer page.</strong> Any user with <code>?dev=true</code> can access system diagnostics. Mitigate with role-based access control.</p></div>
+</section>
+
+<section class="sec" id="analytics">
+<div class="bc"><a href="#home">Docs</a><span>/</span>Infrastructure<span>/</span>Analytics</div>
+<h1 class="pt">Analytics System</h1>
+<p>Analytics are stored in <code>st.session_state.analytics</code> &mdash; a dict updated on every prediction. Visualised via Plotly: bar charts for disease/symptom frequency, pie for model usage, line for confidence trends.</p>
+<pre><button class="cpb" onclick="cp(this)">Copy</button><code>{
+    <span class="st">"total_predictions"</span>: 0,
+    <span class="st">"model_usage"</span>: {<span class="st">"Logistic Regression"</span>: 0, <span class="st">"Decision Tree"</span>: 0, <span class="st">"KNN"</span>: 0},
+    <span class="st">"symptoms_detected"</span>: {},   <span class="cm"># symptom -&gt; count</span>
+    <span class="st">"predicted_diseases"</span>: {}   <span class="cm"># disease -&gt; count</span>
+}</code></pre>
+</section>
+
+<section class="sec" id="deployment">
+<div class="bc"><a href="#home">Docs</a><span>/</span>Deployment</div>
+<h1 class="pt">Deployment</h1>
+<div class="co warn"><div class="co-icon">&#9888;&#65039;</div><p>MediSense AI requires Ollama locally. Not suitable for Streamlit Community Cloud without replacing the LLM backend.</p></div>
+<pre><button class="cpb" onclick="cp(this)">Copy</button><code>streamlit run app/main.py \
+    --server.port 8501 \
+    --server.headless true \
+    --server.enableXsrfProtection true</code></pre>
+<h2>Docker</h2>
+<pre><button class="cpb" onclick="cp(this)">Copy</button><code>FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+EXPOSE 8501
+CMD ["streamlit", "run", "app/main.py", "--server.headless=true"]</code></pre>
+</section>
+
+<section class="sec" id="future">
+<div class="bc"><a href="#home">Docs</a><span>/</span>Future Roadmap</div>
+<h1 class="pt">Future Improvements</h1>
+<div class="cg">
+  <div class="card"><div class="ci">&#128274;</div><div class="ct">bcrypt Passwords</div><div class="cd">Replace SHA-256 with bcrypt or argon2 with per-user salts.</div></div>
+  <div class="card"><div class="ci">&#128101;</div><div class="ct">Role-Based Access</div><div class="cd">Add role column to users table. Gate admin pages server-side.</div></div>
+  <div class="card"><div class="ci">&#127760;</div><div class="ct">Cloud LLM Fallback</div><div class="cd">Add OpenAI / Anthropic fallback when Ollama is unavailable.</div></div>
+  <div class="card"><div class="ci">&#128196;</div><div class="ct">PDF Export</div><div class="cd">Generate PDF from clinical report using weasyprint or reportlab.</div></div>
+  <div class="card"><div class="ci">&#128203;</div><div class="ct">Persistent Logs</div><div class="cd">Write activity logs to SQLite instead of generating synthetically.</div></div>
+  <div class="card"><div class="ci">&#127981;</div><div class="ct">ICD-10 Mapping</div><div class="cd">Map disease names to official ICD-10 codes for clinical interoperability.</div></div>
+  <div class="card"><div class="ci">&#9878;</div><div class="ct">Unit Tests</div><div class="cd">Expand test coverage for predictor, recommendation engine, and database.</div></div>
+  <div class="card"><div class="ci">&#128241;</div><div class="ct">Mobile UX</div><div class="cd">Improve responsive layout for navbar and chat on small screens.</div></div>
+</div>
+</section>
+
+<div class="pn">
+  <a href="#deployment" class="prev"><span class="nd">&#8592; Previous</span><span class="nl">Deployment</span></a>
+  <a href="#home" class="next"><span class="nd">Next &#8594;</span><span class="nl">Back to Overview</span></a>
+</div>
+
+</main>
+<script>
+mermaid.initialize({startOnLoad:true,theme:'dark',themeVariables:{primaryColor:'#1e3a5f',primaryTextColor:'#e2e8f0',primaryBorderColor:'#3b82f6',lineColor:'#3b82f6',secondaryColor:'#0b1220',fontFamily:'Inter,sans-serif'},flowchart:{curve:'basis',htmlLabels:true}});
+function cp(btn){const t=btn.closest('pre').querySelector('code').innerText;navigator.clipboard.writeText(t).then(()=>{btn.textContent='Copied!';btn.classList.add('ok');setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('ok')},2000)})}
+const secs=document.querySelectorAll('.sec');
+const io=new IntersectionObserver((ents)=>{ents.forEach(e=>{if(e.isIntersecting){const id=e.target.id;document.querySelectorAll('.sb-link').forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+id))}})},{threshold:0.2});
+secs.forEach(s=>io.observe(s));
+const SI=[
+  {t:'Overview',s:'Getting Started',id:'home',x:'medisense ai disease prediction overview tech stack'},
+  {t:'Architecture',s:'Getting Started',id:'architecture',x:'system architecture layers presentation business data'},
+  {t:'Folder Structure',s:'Getting Started',id:'folder-structure',x:'folder directory files app src models utils styles'},
+  {t:'Quickstart',s:'Getting Started',id:'quickstart',x:'quickstart install run start ollama requirements venv pip'},
+  {t:'Authentication',s:'User Flows',id:'auth-flow',x:'login register password sha256 hash session auth'},
+  {t:'Patient Flow',s:'User Flows',id:'patient-flow',x:'patient consultation prediction report history analytics'},
+  {t:'Consultation',s:'User Flows',id:'consultation-flow',x:'chatbot llm symptoms extraction qwen ollama streaming'},
+  {t:'Prediction Flow',s:'User Flows',id:'prediction-flow',x:'ml models logistic regression decision tree knn feature vector binary'},
+  {t:'Report Flow',s:'User Flows',id:'report-flow',x:'clinical report xai reasoning format markdown strip'},
+  {t:'Admin Flow',s:'User Flows',id:'admin-flow',x:'developer dashboard admin dev mode diagnostics'},
+  {t:'ML Pipeline',s:'ML Pipeline',id:'ml-pipeline',x:'dataset training scikit-learn joblib cache feature 377 symptoms'},
+  {t:'LLM Pipeline',s:'ML Pipeline',id:'llm-pipeline',x:'ollama qwen llm chat streaming xai explanation ask_llm'},
+  {t:'Recommendation Engine',s:'ML Pipeline',id:'recommendation',x:'recommendations specialist care lifestyle emergency risk color'},
+  {t:'database.py',s:'Module Reference',id:'module-database',x:'sqlite crud wal journal mode foreign keys register login save'},
+  {t:'predictor.py',s:'Module Reference',id:'module-predictor',x:'predict disease confidence feature vector numpy sklearn cache_resource'},
+  {t:'navigation.py',s:'Module Reference',id:'module-navigation',x:'pages routes pageconfig registry dev_only page options label'},
+  {t:'session_state.py',s:'Module Reference',id:'module-session',x:'session state keys logged in messages patient data analytics'},
+  {t:'helpers.py',s:'Module Reference',id:'module-helpers',x:'load css format clinical reasoning xai html markdown'},
+  {t:'ui.py',s:'Module Reference',id:'module-ui',x:'ui components glasscard metriccard emptystate pagelayout render escape'},
+  {t:'logs.py',s:'Module Reference',id:'module-logs',x:'activity log boot prediction json csv download heartbeat'},
+  {t:'navbar.py',s:'Module Reference',id:'module-navbar',x:'navbar navigation brand logout sticky columns buttons session'},
+  {t:'Database Schema',s:'Infrastructure',id:'database-schema',x:'users predictions preferences sqlite schema erd tables wal'},
+  {t:'Session Flow',s:'Infrastructure',id:'session-flow',x:'session state machine authenticated unauthenticated landing auth'},
+  {t:'Caching',s:'Infrastructure',id:'caching',x:'cache resource cache data lru performance model css dataset'},
+  {t:'Security',s:'Infrastructure',id:'security',x:'sql injection html injection password hashing routing escape'},
+  {t:'Analytics',s:'Infrastructure',id:'analytics',x:'analytics plotly charts symptoms diseases model usage confidence'},
+  {t:'Deployment',s:'Reference',id:'deployment',x:'deploy docker streamlit config production server headless port'},
+  {t:'Future Roadmap',s:'Reference',id:'future',x:'future bcrypt role based pdf icd10 tests mobile cloud llm'},
+];
+function doSearch(q){
+  const box=document.getElementById('search-results');
+  if(!q.trim()){box.style.display='none';return}
+  const ql=q.toLowerCase();
+  const res=SI.filter(i=>i.t.toLowerCase().includes(ql)||i.x.toLowerCase().includes(ql)).slice(0,8);
+  if(!res.length){box.style.display='none';return}
+  box.innerHTML=res.map(r=>`<div class="sri" onclick="goTo('${r.id}')"><div class="t">${r.t}</div><div class="s">${r.s}</div></div>`).join('');
+  box.style.display='block';
+}
+function goTo(id){document.getElementById('search-results').style.display='none';document.getElementById('search-box').value='';document.getElementById(id)?.scrollIntoView({behavior:'smooth'})}
+document.getElementById('search-box').addEventListener('blur',()=>setTimeout(()=>{document.getElementById('search-results').style.display='none'},200));
+</script>
+</body>
+</html>

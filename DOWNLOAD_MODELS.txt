@@ -1,0 +1,13 @@
+﻿Large pretrained ML models are hosted separately because GitHub does not allow files larger than 100 MB.
+
+Download:
+- DecisionTree.pkl
+- KNN.pkl
+
+from:
+<Google Drive Link> (Teacher, please check with the student for the exact Google Drive link)
+
+Copy both files into:
+models/general/
+
+No other setup required.
