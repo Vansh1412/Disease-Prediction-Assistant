@@ -6,8 +6,9 @@ best engine to use.
 
 Priority
 --------
-1. Gemini   — if GEMINI_API_KEY is set AND connectivity probe passes
+1. Gemini   — if GEMINI_API_KEY is set (config check only, no API probe)
 2. Ollama   — if server is reachable AND requested model exists
+              (SKIPPED automatically on Streamlit Cloud)
 3. Basic    — always available (rule-based fallback)
 
 Detection is done once per application lifetime (cached in module state).
@@ -20,7 +21,7 @@ reset()  → None
 """
 
 import logging
-from src.chatbot.config import DEFAULT_ENGINE, GEMINI_API_KEY
+from src.chatbot.config import DEFAULT_ENGINE, GEMINI_API_KEY, is_cloud_env
 
 logger = logging.getLogger(__name__)
 
@@ -55,38 +56,59 @@ def detect(force: bool = False) -> str:
         return _detected_engine
 
     # ── Auto-detect ─────────────────────────────────────────────────────────
-    logger.info("EngineDetector: starting auto-detection …")
+    _cloud = is_cloud_env()
+    logger.info(
+        "EngineDetector: starting auto-detection (cloud=%s) …", _cloud
+    )
 
-    # 1. Gemini
+    # 1. Gemini — configuration check only (no API probe)
     if GEMINI_API_KEY:
         try:
-            from src.chatbot import gemini_engine
+            from src.chatbot import gemini_engine  # noqa: PLC0415
             if gemini_engine.is_available():
-                logger.info("EngineDetector: ✅ Gemini selected.")
+                logger.info("EngineDetector: ✅ Gemini selected (config verified).")
                 _detected_engine = "gemini"
                 return _detected_engine
             else:
                 reason = gemini_engine.get_status()
-                logger.warning("EngineDetector: Gemini probe failed — %s", reason)
-        except Exception as exc:
-            logger.warning("EngineDetector: Gemini probe error — %s", exc)
+                logger.warning(
+                    "EngineDetector: Gemini config check failed — %s", reason
+                )
+        except Exception:
+            import traceback
+            logger.warning(
+                "EngineDetector: Gemini import error:\n%s", traceback.format_exc()
+            )
     else:
-        logger.info("EngineDetector: GEMINI_API_KEY not set, skipping Gemini.")
+        logger.info(
+            "EngineDetector: GEMINI_API_KEY not set — skipping Gemini."
+        )
 
-    # 2. Ollama
-    try:
-        from src.chatbot import ollama_engine
-        if ollama_engine.is_available():
-            logger.info("EngineDetector: ✅ Ollama selected.")
-            _detected_engine = "ollama"
-            return _detected_engine
-        else:
-            logger.warning("EngineDetector: Ollama not reachable or model missing.")
-    except Exception as exc:
-        logger.warning("EngineDetector: Ollama probe error — %s", exc)
+    # 2. Ollama — SKIP on Streamlit Cloud (no local server available)
+    if _cloud:
+        logger.info(
+            "EngineDetector: Running on Streamlit Cloud — "
+            "skipping Ollama (no local server available)."
+        )
+    else:
+        try:
+            from src.chatbot import ollama_engine  # noqa: PLC0415
+            if ollama_engine.is_available():
+                logger.info("EngineDetector: ✅ Ollama selected.")
+                _detected_engine = "ollama"
+                return _detected_engine
+            else:
+                logger.warning(
+                    "EngineDetector: Ollama not reachable or model missing."
+                )
+        except Exception:
+            import traceback
+            logger.warning(
+                "EngineDetector: Ollama probe error:\n%s", traceback.format_exc()
+            )
 
     # 3. Basic (always succeeds)
-    logger.info("EngineDetector: ✅ Basic engine selected (fallback).")
+    logger.info("EngineDetector: ✅ Clinical Assistant (Basic) selected (fallback).")
     _detected_engine = "basic"
     return _detected_engine
 

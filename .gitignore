@@ -1,4 +1,4 @@
-﻿venv/
+venv/
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
@@ -13,6 +13,8 @@ models/*.pkl
 
 Thumbs.db
 data/disease_prediction/Final_Augmented_dataset_Diseases_and_Symptoms.csv
+# Keep the pre-extracted feature names (needed on Streamlit Cloud)
+!data/disease_prediction/feature_names.json
 # --- Added during release audit ---
 .venv/
 .pytest_cache/

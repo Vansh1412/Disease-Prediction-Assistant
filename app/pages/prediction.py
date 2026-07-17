@@ -7,6 +7,7 @@ from app.utils.navigation import CONSULTATION, REPORT
 from app.utils.ui import escape_html, render_html
 from app.utils.helpers import format_clinical_reasoning
 from src.chatbot.prediction_bridge import run_prediction_bridge
+from src.prediction.predictor import _available_model_names
 
 
 def _render_hero_diagnosis(res: dict) -> None:
@@ -373,24 +374,39 @@ def render_prediction() -> None:
 
     if not symptoms:
         st.warning("No active symptom profile detected. Please complete NLU check-in first.")
-        if st.button("Open AI Consultation Console", use_container_width=True):
+        if st.button("Open AI Consultation Console", width="stretch"):
             st.session_state.current_page = CONSULTATION
             st.rerun()
         return
 
-    # Algorithm Selector Row
+    # Algorithm Selector Row — only show models whose .pkl files exist
+    _avail = _available_model_names()
+    _model_display_options = []
+    for _m in _avail:
+        if _m == "Logistic Regression":
+            _model_display_options.append("Logistic Regression (Recommended)")
+        else:
+            _model_display_options.append(_m)
+
+    if not _model_display_options:
+        st.error(
+            "⚠️ No prediction models are available on this deployment. "
+            "Please check server logs for details."
+        )
+        return
+
     c1, c2 = st.columns([3, 1])
     with c1:
         model_choice = st.selectbox(
             "Prediction Algorithm",
-            ["Logistic Regression (Recommended)", "Decision Tree", "KNN"],
+            _model_display_options,
             label_visibility="visible"
         )
         st.session_state.selected_model = model_choice
     with c2:
         # Align button
         render_html("<div style='height: 1.7rem;'></div>")
-        predict_clicked = st.button("Execute Inference", use_container_width=True)
+        predict_clicked = st.button("Execute Inference", width="stretch")
 
     if predict_clicked:
         with st.spinner(f"Running inference on {st.session_state.selected_model}..."):
@@ -491,6 +507,6 @@ def render_prediction() -> None:
             </div>
             """)
             
-            if st.button("Generate Official Report", use_container_width=True):
+            if st.button("Generate Official Report", width="stretch"):
                 st.session_state.current_page = REPORT
                 st.rerun()
