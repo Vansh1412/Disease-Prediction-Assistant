@@ -28,14 +28,15 @@ database.db
 tmp/
 temp/
 
-# Ignore very large model files specifically
-models/DecisionTree.pkl
-models/KNN.pkl
-models/general/DecisionTree.pkl
-models/general/KNN.pkl
+# Ignore oversized original backups (exceed GitHub 100 MB limit)
+models/original_backup/
 
-# Keep small models (do not ignore)
-!models/LogisticRegression.pkl
-!models/label_encoder.pkl
+# Track all models in models/general/ — now all are GitHub-safe (compressed with joblib compress=3)
+# DecisionTree.pkl : 3.85 MB  (was 358 MB uncompressed)
+# KNN.pkl          : 6.05 MB  (was 570 MB uncompressed)
+# LogisticRegression.pkl : 2.19 MB
+# label_encoder.pkl      : 0.02 MB
+!models/general/DecisionTree.pkl
+!models/general/KNN.pkl
 !models/general/LogisticRegression.pkl
 !models/general/label_encoder.pkl
