@@ -1,51 +1,35 @@
 # ===========================
-# HealthAI Requirements
+# MediSense AI - Production Requirements
 # ===========================
 
 # Core
-streamlit==1.58.0
-pandas==2.3.0
-numpy==2.3.1
-scikit-learn==1.7.0
-scipy==1.18.0
-joblib==1.5.1
-matplotlib==3.10.3
-plotly==6.8.0
+streamlit
+pandas
+numpy
+scikit-learn
+scipy
+joblib
+matplotlib
+plotly
 
-# AI / LLM
-google-genai>=1.0.0
-ollama==0.6.2
-torch==2.12.1
-transformers==5.12.1
-sentence-transformers==5.6.0
-tokenizers==0.22.2
-huggingface_hub==1.21.0
-safetensors==0.8.0
+# AI
+google-genai
 
 # NLP
-RapidFuzz==3.14.5
-regex==2026.6.28
+RapidFuzz
+regex
 
 # Streamlit Components
-streamlit-extras==1.6.0
-streamlit-option-menu==0.4.0
-streamlit-lottie==0.0.5
+streamlit-extras
+streamlit-option-menu
+streamlit-lottie
 
 # Utilities
-python-dotenv==1.2.2
-requests==2.34.2
-GitPython==3.1.50
-watchdog==6.0.0
-Pillow==11.3.0
-PyYAML==6.0.3
-typing_extensions==4.15.0
-rich==15.0.0
-
-# Server
-uvicorn==0.49.0
-starlette==1.3.1
-
-# Development
-jupyter==1.1.1
-notebook==7.4.4
-ipykernel==7.3.0
+python-dotenv
+requests
+Pillow
+PyYAML
+typing_extensions
+rich
+watchdog
+GitPython
