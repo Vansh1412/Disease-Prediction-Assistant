@@ -39,9 +39,9 @@ HealthAI/
 │   │   ├── gemini_engine.py  # Gemini API adapter
 │   │   ├── ollama_engine.py  # Ollama (Qwen) adapter
 │   │   ├── basic_engine.py   # Rule-based fallback engine
-│   │   ├── conversation_manager.py # Triage-style clinical conversation flow (Sprint 3)
+│   │   ├── conversation_manager.py # Triage-style clinical conversation flow 
 │   │   ├── clinical_reasoning.py   # Reasoning logic for predictions
-│   │   ├── pipeline.py       # Clinical NLP pipeline (Sprint 2)
+│   │   ├── pipeline.py       # Clinical NLP pipeline
 │   │   ├── symptom_normalizer.py
 │   │   ├── synonym_index.py
 │   │   ├── medical_dictionary.py
