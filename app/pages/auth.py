@@ -78,7 +78,8 @@ div[data-baseweb="input"]:focus-within {
 div[data-baseweb="input"] input { color: #fff !important; }
 
 /* Submit Button */
-.stButton > button {
+.auth-page .stButton > button,
+[data-testid="stColumn"]:nth-child(2) > div .stButton > button {
     background: linear-gradient(135deg, #3B82F6, #2563EB) !important;
     color: white !important;
     border: none !important;

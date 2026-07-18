@@ -334,7 +334,7 @@ def render_prediction() -> None:
     }
     
     /* Premium Action button styling override */
-    [data-testid="stColumn"] button {
+    [data-testid="stColumn"] [data-testid="stButton"] button {
         background: linear-gradient(135deg, #6366F1, #4F46E5) !important;
         border: none !important;
         box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3) !important;
