@@ -174,12 +174,19 @@ def render_prediction() -> None:
         font-weight: 700;
         margin-bottom: 0.5rem;
     }
-    .hero-title {
+    /* hero-title is scoped to .hero-card to prevent collision with the
+       global theme.css .hero-title rule (landing-page 4rem gradient style). */
+    .hero-card .hero-title {
         font-size: 3rem;
         font-weight: 900;
         margin: 0 0 1rem 0;
         color: #fff;
         line-height: 1.1;
+        /* Override the global gradient + transparent fill from theme.css */
+        background: none !important;
+        -webkit-background-clip: unset !important;
+        background-clip: unset !important;
+        -webkit-text-fill-color: #fff !important;
     }
     .hero-meta {
         display: flex;
@@ -333,22 +340,12 @@ def render_prediction() -> None:
         display: inline-block;
     }
     
-    /* Premium Action button styling override */
-    [data-testid="stColumn"] [data-testid="stButton"] button {
-        background: linear-gradient(135deg, #6366F1, #4F46E5) !important;
-        border: none !important;
-        box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3) !important;
-        color: #fff !important;
-        font-weight: 800 !important;
-        border-radius: 12px !important;
-        padding: 0.75rem 1rem !important;
-        width: 100% !important;
-        font-size: 1.05rem !important;
-        transition: all 0.3s !important;
-    }
-    [data-testid="stColumn"] button:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 12px 30px rgba(99, 102, 241, 0.45) !important;
+    /* Suppress duplicate BaseWeb SVG chevron on the selectbox.
+       Streamlit Cloud (newer BaseWeb versions) renders two arrow icons:
+       one via an SVG child and a second via ::after or a sibling SVG.
+       We hide the redundant sibling SVG to restore a clean single arrow. */
+    [data-baseweb="select"] svg + svg {
+        display: none !important;
     }
     
     /* Config Panel selectors target */

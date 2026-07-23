@@ -92,7 +92,8 @@ div[data-baseweb="input"] input { color: #fff !important; }
     transition: all 0.2s !important;
     font-family: 'Inter', system-ui, sans-serif !important;
 }
-.stButton > button:hover {
+.auth-page .stButton > button:hover,
+[data-testid="stColumn"]:nth-child(2) > div .stButton > button:hover {
     transform: translateY(-2px) !important;
     box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4) !important;
 }

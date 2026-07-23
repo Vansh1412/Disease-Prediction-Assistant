@@ -56,6 +56,32 @@
 *:not(.material-symbols-rounded):not(.material-symbols-outlined):not([class*="icon"]):not([class*="Icon"]) {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
+/* ── Material Symbols font whitelist (password eye icon, etc.) ──────────
+   The *:not() rule above is fragile on Streamlit Cloud where BaseWeb may
+   nest the icon <span> inside containers not caught by the :not() guard.
+   This explicit whitelist takes precedence and ensures the icon font is
+   always applied — regardless of nesting depth or Streamlit version. */
+.material-symbols-outlined,
+.material-symbols-rounded,
+.material-symbols-sharp,
+span.material-symbols-outlined,
+button .material-symbols-outlined,
+button span.material-symbols-outlined,
+[data-baseweb] .material-symbols-outlined,
+[data-baseweb] .material-symbols-rounded {
+    font-family: 'Material Symbols Outlined', 'Material Icons', sans-serif !important;
+    font-optical-sizing: auto !important;
+    font-style: normal !important;
+    font-weight: normal !important;
+    font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24 !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    word-wrap: normal !important;
+    white-space: nowrap !important;
+    direction: ltr !important;
+    -webkit-font-feature-settings: 'liga' !important;
+    -webkit-font-smoothing: antialiased !important;
+}
 
 /* ── 3D Animated Multi-Colour Blob Background ───────────────── */
 @keyframes blobFloat1 {
@@ -190,7 +216,9 @@
 header[data-testid="stHeader"]      { display: none !important; }
 .stDeployButton, [data-testid="stToolbar"] { display: none !important; }
 footer[data-testid="stBottomBlockContainer"] { display: none !important; }
-footer { visibility: hidden; height: 0 !important; }
+/* NOTE: Streamlit's own footer is already hidden by data-testid rule above.
+   The broad `footer { visibility: hidden }` selector was removed because it
+   incorrectly hides custom <footer> HTML elements on the landing page. */
 
 /* ── Custom Scrollbar ──────────────────────────────────────── */
 ::-webkit-scrollbar              { width: 5px; }
@@ -608,20 +636,10 @@ div[data-testid="stForm"] {
   100% { background-position: 0%   50%; }
 }
 
-@keyframes blobFloat1 {
-  0%, 100% { transform: translate(0px,   0px)  scale(1);    }
-  33%       { transform: translate(40px, -30px) scale(1.08); }
-  66%       { transform: translate(-20px, 20px) scale(0.95); }
-}
-@keyframes blobFloat2 {
-  0%, 100% { transform: translate(0px,  0px)  scale(1);   }
-  40%       { transform: translate(-50px, 30px) scale(1.1); }
-  70%       { transform: translate(30px, -20px) scale(0.9); }
-}
-@keyframes blobFloat3 {
-  0%, 100% { transform: translate(0px, 0px)   scale(1);    }
-  50%       { transform: translate(20px, 40px) scale(1.05); }
-}
+/* blobFloat1/2/3 keyframes are defined at the top of this file (lines 61-78)
+   and used by the JS-injected #ms-bg-layer blobs. Duplicate definitions
+   from this merged section have been removed to avoid the later (weaker)
+   values overriding the intended animation distances. */
 
 @keyframes particleDrift {
   0%   { transform: translateY(110vh) rotate(0deg);    opacity: 0;   }
