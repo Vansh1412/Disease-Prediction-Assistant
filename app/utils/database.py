@@ -1,12 +1,19 @@
 import hashlib
 import json
+import os
 import sqlite3
 from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
 
-DB_PATH = Path("database.db")
+_IST = ZoneInfo("Asia/Kolkata")
+
+# On Streamlit Cloud the project root is read-only; use /tmp for the DB.
+# Locally, keep the DB in the project root for persistence during dev.
+_IS_CLOUD = bool(os.getenv("STREAMLIT_SHARING_MODE")) or os.path.exists("/mount/src")
+DB_PATH = Path("/tmp/database.db") if _IS_CLOUD else Path("database.db")
 
 
 def get_connection() -> sqlite3.Connection:
@@ -69,7 +76,7 @@ def init_db() -> None:
     _ADMIN_EMAIL    = "chopravansh1412@gmail.com"
     _ADMIN_NAME     = "Admin"
     _ADMIN_PASSWORD = "vansh@1412"
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    now = datetime.now(_IST).strftime("%Y-%m-%d %H:%M:%S")
     c.execute('SELECT id FROM users WHERE email = ?', (_ADMIN_EMAIL,))
     if not c.fetchone():
         c.execute(
@@ -96,7 +103,7 @@ def register_user(name: str, email: str, password: str) -> tuple[bool, int | str
     conn = get_connection()
     c = conn.cursor()
     try:
-        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        now = datetime.now(_IST).strftime("%Y-%m-%d %H:%M:%S")
         c.execute('''
             INSERT INTO users (name, email, password_hash, created_at, last_login)
             VALUES (?, ?, ?, ?, ?)
@@ -122,7 +129,7 @@ def login_user(email: str, password: str) -> tuple[bool, dict[str, Any] | str]:
     user = c.fetchone()
     
     if user and user[2] == hash_password(password):
-        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        now = datetime.now(_IST).strftime("%Y-%m-%d %H:%M:%S")
         c.execute('UPDATE users SET last_login = ? WHERE id = ?', (now, user[0]))
         conn.commit()
         conn.close()
@@ -141,7 +148,7 @@ def save_prediction(
 ) -> None:
     conn = get_connection()
     c = conn.cursor()
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    now = datetime.now(_IST).strftime("%Y-%m-%d %H:%M:%S")
     symptoms_str = json.dumps(symptoms) if isinstance(symptoms, list) else str(symptoms)
     c.execute('''
         INSERT INTO predictions (user_id, date, symptoms, disease, confidence, model_used)
@@ -231,7 +238,7 @@ def get_admin_stats() -> dict[str, Any]:
     c.execute('SELECT COUNT(*) FROM predictions')
     stats["total_predictions"] = c.fetchone()[0]
 
-    today = datetime.now().strftime("%Y-%m-%d")
+    today = datetime.now(_IST).strftime("%Y-%m-%d")
     c.execute("SELECT COUNT(*) FROM predictions WHERE date LIKE ?", (f"{today}%",))
     stats["today_predictions"] = c.fetchone()[0]
 

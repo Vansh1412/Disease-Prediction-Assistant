@@ -130,6 +130,13 @@ div[data-baseweb="input"] input { color: #fff !important; }
 }
 .auth-divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.07); }
 .auth-divider-text { font-size: 0.75rem; color: rgba(255,255,255,0.2); font-weight: 500; }
+
+/* Hide the Streamlit password visibility toggle button (shows as "visibili" text) */
+div[data-baseweb="input"] button[kind="tertiary"],
+div[data-baseweb="input"] button,
+[data-testid="stTextInput"] button {
+    display: none !important;
+}
 </style>
 """
 

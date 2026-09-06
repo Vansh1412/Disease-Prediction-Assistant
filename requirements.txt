@@ -33,3 +33,4 @@ typing_extensions
 rich
 watchdog
 GitPython
+tzdata

@@ -1,4 +1,5 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 # pyrefly: ignore [missing-import]
 import streamlit as st
@@ -18,7 +19,8 @@ def render_dashboard() -> None:
     """Renders the Premium AI SaaS Dashboard."""
 
     user          = st.session_state.get("user", {"name": "Guest"})
-    now           = datetime.now()
+    IST           = ZoneInfo("Asia/Kolkata")
+    now           = datetime.now(IST)
     greeting      = "Good morning" if now.hour < 12 else "Good afternoon" if now.hour < 18 else "Good evening"
     display_name  = escape_html(user.get("name", "Guest").split(" ")[0])
     ai_engine     = st.session_state.get("ai_engine_label", "Standard Consultation")
@@ -520,7 +522,7 @@ def render_dashboard() -> None:
         for p in reversed(predictions[-3:]):
             disease = escape_html(p["disease"])
             conf = f"{p['confidence']:.1f}%"
-            time_str = datetime.now().strftime("%I:%M %p") # Simulated for now
+            time_str = p.get("date", datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S"))
             tl_html += f"""<div class="tl-item">
 <div class="tl-dot"></div>
 <div class="tl-content">
