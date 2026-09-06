@@ -155,6 +155,19 @@ def extract_entities(
                 duration=None,
             ))
 
+    # ── Body-part word lookup (used to validate fuzzy matches) ────────────
+    # Build a flat set of every body-part keyword from constants.BODY_LOCATIONS
+    # so we can check: "does this matched symptom mention a body part that the
+    # user never said?"
+    from src.chatbot.constants import BODY_LOCATIONS as _BODY_LOCATIONS
+    _BODY_PART_WORDS: set[str] = set()
+    for _loc_label, _loc_phrases in _BODY_LOCATIONS.items():
+        for _ph in _loc_phrases:
+            _BODY_PART_WORDS.update(_ph.lower().split())
+    # Remove very short / ambiguous words from the set
+    _BODY_PART_WORDS -= {"the", "of", "in", "or", "and", "a", "an",
+                         "eye", "ear", "leg", "arm", "hip", "lip"}
+
     # ── Pass 2: Fuzzy match for unresolved candidates ─────────────────────
     # Only try candidates that were not already exactly matched.
     # Guard: skip single tokens that are very generic (e.g. "pain", "feeling")
@@ -166,12 +179,11 @@ def extract_entities(
     unresolved = [
         c for c in candidates
         if c not in exact_matched_phrases
-        and len(c) > 3
-        and c not in _GENERIC_SINGLE_TOKENS  # skip standalone generic words
+        and len(c) >= 8                        # minimum 8 chars avoids junk n-grams
+        and c not in _GENERIC_SINGLE_TOKENS    # skip standalone generic words
     ]
 
     for candidate in unresolved:
-        # Skip if we already have enough high-confidence matches for short inputs
         best_phrase, ratio = _fuzzy_match(
             candidate, phrase_corpus, threshold=FUZZY_LOW_THRESHOLD
         )
@@ -179,12 +191,12 @@ def extract_entities(
             continue
 
         # Length-ratio guard: don't match a short candidate to a much longer phrase.
-        # E.g. "chest" (5 chars) should not match "congestion in chest" (18 chars).
+        # E.g. "in chest" (2 words) should not match "congestion in chest" (3 words).
         candidate_words = len(candidate.split())
         best_phrase_words = len(best_phrase.split())
-        if best_phrase_words > candidate_words + 2:
+        if best_phrase_words > candidate_words + 1:
             logger.debug(
-                "Fuzzy skip: '%s' (%d words) vs phrase '%s' (%d words) — length mismatch.",
+                "Fuzzy skip (length): '%s' (%d words) vs phrase '%s' (%d words).",
                 candidate, candidate_words, best_phrase, best_phrase_words,
             )
             continue
@@ -194,6 +206,28 @@ def extract_entities(
             continue
         if dataset_symptoms and canonical not in dataset_symptoms:
             continue
+
+        # ── Body-part coherence check ──────────────────────────────────────
+        # If the matched canonical symptom name contains a body-part keyword
+        # (e.g. "groin", "finger", "hand") that does NOT appear anywhere in
+        # the user's original text or detected locations, reject the match.
+        # This is the key fix for "pain in chest" → "groin pain" false matches.
+        canonical_words = set(canonical.lower().split())
+        body_parts_in_canonical = canonical_words & _BODY_PART_WORDS
+        if body_parts_in_canonical:
+            user_text_lower = normalized.lower()
+            user_locations_lower = {loc.lower() for loc in locations}
+            any_body_part_in_text = any(
+                bp in user_text_lower or bp in user_locations_lower
+                for bp in body_parts_in_canonical
+            )
+            if not any_body_part_in_text:
+                logger.debug(
+                    "Fuzzy skip (coherence): canonical '%s' has body parts %s "
+                    "not found in user text '%s'.",
+                    canonical, body_parts_in_canonical, normalized[:60],
+                )
+                continue
 
         conf_level = estimate_from_fuzzy_score(ratio)
         negated = _check_negated(candidate)
@@ -212,7 +246,8 @@ def extract_entities(
 
 
     # ── Pass 3: Location enrichment for generic terms ─────────────────────
-    # e.g. user says "pain in my arm" but "pain" alone doesn't resolve
+    # e.g. user says "pain in my arm" but "pain" alone doesn't resolve.
+    # Only enriches using body locations that actually appear in the user's text.
     _GENERIC_SYMPTOMS = {"pain", "ache", "weakness", "swelling", "stiffness", "cramp"}
     for candidate in candidates:
         if candidate in _GENERIC_SYMPTOMS and locations:
@@ -233,6 +268,33 @@ def extract_entities(
                         temporal="unknown",
                         duration=None,
                     ))
+
+    # ── Pass 4: Final body-part coherence filter ───────────────────────────
+    # Remove any entity whose canonical name contains a body-part word that
+    # does NOT appear in the user's text or detected locations.
+    # This is the safety net that catches any false positives that slipped
+    # through Passes 1–3 (e.g. exact-match synonyms for wrong body parts).
+    user_text_lower = normalized.lower()
+    user_locations_lower = {loc.lower() for loc in locations}
+    filtered_entities: list[SymptomEntity] = []
+    for ent in entities:
+        canon_words = set(ent.canonical.lower().split())
+        body_parts_in_canon = canon_words & _BODY_PART_WORDS
+        if body_parts_in_canon:
+            # At least one body-part word in the canonical must be present
+            # in what the user actually said or in detected locations.
+            found = any(
+                bp in user_text_lower or bp in user_locations_lower
+                for bp in body_parts_in_canon
+            )
+            if not found:
+                logger.debug(
+                    "Pass 4 filter: removed '%s' (body parts %s absent from text).",
+                    ent.canonical, body_parts_in_canon,
+                )
+                continue
+        filtered_entities.append(ent)
+    entities = filtered_entities
 
     logger.debug(
         "EntityExtractor: extracted %d entities (%d negated) from '%s'.",
