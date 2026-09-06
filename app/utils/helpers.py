@@ -45,10 +45,14 @@ def format_clinical_reasoning(raw_text: str) -> str:
     if not raw_text:
         return '<span style="color:rgba(255,255,255,0.4);">No reasoning available.</span>'
 
-    # ── Step 1: Strip any raw HTML the AI may have returned ──────────────
-    # If the AI returned HTML markup, remove all tags so we work with plain text
+    # ── Step 1: Strip raw HTML and Markdown syntax ───────────────────────
+    # 1a. Remove all HTML tags the AI may have returned
     text = _re.sub(r'<[^>]+>', ' ', raw_text)
-    # Collapse runs of whitespace created by tag removal
+    # 1b. Strip Markdown heading markers (### Heading, ## Heading, # Heading)
+    text = _re.sub(r'^#{1,6}\s*', '', text, flags=_re.MULTILINE)
+    # 1c. Strip triple-asterisk dividers (*** or ---) used as horizontal rules
+    text = _re.sub(r'^[\*\-]{3,}\s*$', '', text, flags=_re.MULTILINE)
+    # 1d. Collapse runs of whitespace created by tag/marker removal
     text = _re.sub(r'[ \t]{2,}', ' ', text)
     text = _re.sub(r'\n{3,}', '\n\n', text).strip()
 

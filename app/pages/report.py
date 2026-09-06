@@ -1,6 +1,12 @@
 # pyrefly: ignore [missing-import]
 import streamlit as st
 import datetime
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:
+    from backports.zoneinfo import ZoneInfo  # type: ignore
+
+_IST = ZoneInfo("Asia/Kolkata")
 
 from app.utils.ui import escape_html, EmptyState, PageLayout
 from app.utils.helpers import format_clinical_reasoning
@@ -33,8 +39,8 @@ def render_report() -> None:
         detected_sym = list(p_data.get("high_conf_symptoms", p_data.get("detected_symptoms", [])))
         sym_str = escape_html(", ".join(detected_sym) if detected_sym else "None")
 
-        current_date = datetime.datetime.now().strftime("%B %d, %Y - %H:%M:%S")
-        report_id = f"RPT-{datetime.datetime.now().strftime('%Y%m%d%H%M')}"
+        current_date = datetime.datetime.now(_IST).strftime("%B %d, %Y - %H:%M:%S")
+        report_id = f"RPT-{datetime.datetime.now(_IST).strftime('%Y%m%d%H%M')}"
 
         color_map = {
             "Green": "#10B981",

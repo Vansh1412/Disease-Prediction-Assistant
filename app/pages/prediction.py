@@ -1,6 +1,16 @@
 # pyrefly: ignore [missing-import]
 import streamlit as st
 from datetime import datetime
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:
+    from backports.zoneinfo import ZoneInfo  # type: ignore
+
+_IST = ZoneInfo("Asia/Kolkata")
+
+def _now_ist() -> datetime:
+    """Return current datetime in IST."""
+    return datetime.now(_IST)
 
 from app.utils.database import save_prediction
 from app.utils.navigation import CONSULTATION, REPORT
@@ -82,21 +92,21 @@ def _render_differential_timeline(res: dict) -> None:
     <div class="tl-row">
         <div class="tl-dot"></div>
         <div class="tl-content">
-            <div class="tl-time">{datetime.now().strftime('%H:%M:%S.%f')[:-3]}</div>
+            <div class="tl-time">{_now_ist().strftime('%H:%M:%S.%f')[:-3]}</div>
             <div class="tl-desc">Extracted {len(res['symptoms_used'])} clinical variables via NLP</div>
         </div>
     </div>
     <div class="tl-row">
         <div class="tl-dot"></div>
         <div class="tl-content">
-            <div class="tl-time">{datetime.now().strftime('%H:%M:%S.%f')[:-3]}</div>
+            <div class="tl-time">{_now_ist().strftime('%H:%M:%S.%f')[:-3]}</div>
             <div class="tl-desc">Executed {escape_html(res['model_used'])} Algorithm</div>
         </div>
     </div>
     <div class="tl-row">
         <div class="tl-dot pulse-dot"></div>
         <div class="tl-content">
-            <div class="tl-time">{datetime.now().strftime('%H:%M:%S.%f')[:-3]}</div>
+            <div class="tl-time">{_now_ist().strftime('%H:%M:%S.%f')[:-3]}</div>
             <div class="tl-desc" style="color:#fff; font-weight:600;">Diagnosis isolated with {res['top_diseases'][0]['confidence']:.1f}% confidence</div>
         </div>
     </div>
@@ -127,6 +137,16 @@ def render_prediction() -> None:
     
     render_html("""
     <style>
+    /* Ensure the page body always fills at least the viewport height
+       so the footer is always pushed to the very bottom */
+    .pred-page-wrapper {
+        min-height: calc(100vh - 90px);
+        display: flex;
+        flex-direction: column;
+    }
+    .pred-page-content {
+        flex: 1;
+    }
     /* Premium Animations & Layouts */
     .fade-in { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     
@@ -360,6 +380,8 @@ def render_prediction() -> None:
     </style>
     """)
 
+    render_html('<div class="pred-page-wrapper"><div class="pred-page-content">')
+
     render_html("""
     <div class="cr-header">
         <div>
@@ -374,6 +396,7 @@ def render_prediction() -> None:
         if st.button("Open AI Consultation Console", width="stretch"):
             st.session_state.current_page = CONSULTATION
             st.rerun()
+        render_html('</div></div>')  # close wrapper even on early exit
         return
 
     # Algorithm Selector Row — only show models whose .pkl files exist
@@ -430,7 +453,7 @@ def render_prediction() -> None:
             st.session_state.prediction_history = []
             
         st.session_state.prediction_history.append({
-            "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "date": _now_ist().strftime("%Y-%m-%d %H:%M:%S"),
             "symptoms": ", ".join(symptoms),
             "disease": top_disease_name,
             "confidence": top_disease_conf,
@@ -507,3 +530,5 @@ def render_prediction() -> None:
             if st.button("Generate Official Report", width="stretch"):
                 st.session_state.current_page = REPORT
                 st.rerun()
+
+    render_html('</div></div>')  # close pred-page-content + pred-page-wrapper
