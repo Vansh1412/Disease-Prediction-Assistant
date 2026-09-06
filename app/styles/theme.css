@@ -249,6 +249,14 @@ footer[data-testid="stBottomBlockContainer"] { display: none !important; }
     padding-left: 1.5rem !important;
     padding-right: 1.5rem !important;
 }
+/* Streamlit Cloud nested block-container variants — collapse all top dead space */
+div.block-container,
+div[data-testid="block-container"],
+div[class*="block-container"] {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
 /* Reduce excessive Streamlit vertical spacing without collapsing content */
 [data-testid="stVerticalBlock"] { gap: 0.5rem !important; }
 [data-testid="stHorizontalBlock"] { gap: 1rem; }

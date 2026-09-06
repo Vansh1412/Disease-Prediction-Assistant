@@ -65,6 +65,20 @@ def main() -> None:
             [data-testid="stMainBlockContainer"] { max-width: 100% !important; padding: 0 !important; }
             section.main > div.block-container { max-width: 100% !important; padding: 0 1.5rem 3rem !important; }
             body, html { overflow-x: hidden !important; }
+
+            /* ── Collapse top dead space (Streamlit Cloud) ──────────────────
+               Streamlit Cloud uses several nested block-container divs that
+               can carry a large default padding-top (~6rem). We target every
+               known selector variant to guarantee zero top gap.              */
+            div.block-container,
+            div[data-testid="block-container"],
+            div[class*="block-container"],
+            [data-testid="stAppViewContainer"] section > div,
+            [data-testid="stAppViewContainer"] > section > div.block-container,
+            [data-testid="stVerticalBlockBorderWrapper"] {
+                padding-top: 0 !important;
+                margin-top: 0 !important;
+            }
         </style>
         <script>
         (function() {
@@ -81,6 +95,7 @@ def main() -> None:
         })();
         </script>
     """, unsafe_allow_html=True)
+
 
     # ── Resolve AI engine display name (never exposes model internals) ────
     try:
