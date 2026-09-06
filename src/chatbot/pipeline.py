@@ -109,8 +109,11 @@ def _check_emergency(
     symptom_set = set(detected_symptoms)
     for required_set, message in EMERGENCY_COMBINATIONS:
         overlap = symptom_set & required_set
-        # Trigger if at least 2 symptoms from the combination are present
-        if len(overlap) >= 2:
+        # Trigger if at least 3 symptoms from the combination are confirmed.
+        # Requiring 3 prevents a false emergency when a single vague word (e.g.
+        # "pain") is fuzzy-matched into two separate symptom entries, which
+        # was causing emergency alerts on the very first patient message.
+        if len(overlap) >= 3:
             return True, message
 
     return False, None

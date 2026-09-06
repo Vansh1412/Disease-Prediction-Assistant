@@ -155,9 +155,12 @@ EMERGENCY_SINGLE_KEYWORDS: list[str] = [
 # Fuzzy matching threshold
 # ---------------------------------------------------------------------------
 
-FUZZY_HIGH_THRESHOLD: int = 90    # → HIGH confidence
-FUZZY_MEDIUM_THRESHOLD: int = 75  # → MEDIUM confidence
-FUZZY_LOW_THRESHOLD: int = 60     # → LOW confidence (included but flagged)
+FUZZY_HIGH_THRESHOLD: int = 92    # → HIGH confidence
+FUZZY_MEDIUM_THRESHOLD: int = 85  # → MEDIUM confidence
+FUZZY_LOW_THRESHOLD: int = 80     # → LOW confidence (included but flagged)
+# NOTE: Thresholds raised from 90/75/60 to 92/85/80 to prevent single generic
+# words (e.g. "pain", "feeling") from fuzzy-matching unrelated multi-word
+# symptoms (e.g. "facial pain", "foreign body sensation in eye").
 
 # ---------------------------------------------------------------------------
 # Confidence labels

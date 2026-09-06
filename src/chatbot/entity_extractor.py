@@ -156,8 +156,19 @@ def extract_entities(
             ))
 
     # ── Pass 2: Fuzzy match for unresolved candidates ─────────────────────
-    # Only try candidates that were not already exactly matched
-    unresolved = [c for c in candidates if c not in exact_matched_phrases and len(c) > 3]
+    # Only try candidates that were not already exactly matched.
+    # Guard: skip single tokens that are very generic (e.g. "pain", "feeling")
+    # to prevent them fuzzy-matching specific multi-word symptoms like "arm pain".
+    _GENERIC_SINGLE_TOKENS = {
+        "pain", "ache", "feeling", "ill", "sick", "hurt", "hurts",
+        "sore", "bad", "poor", "sensation", "discomfort", "problem", "issue",
+    }
+    unresolved = [
+        c for c in candidates
+        if c not in exact_matched_phrases
+        and len(c) > 3
+        and c not in _GENERIC_SINGLE_TOKENS  # skip standalone generic words
+    ]
 
     for candidate in unresolved:
         # Skip if we already have enough high-confidence matches for short inputs
@@ -165,6 +176,17 @@ def extract_entities(
             candidate, phrase_corpus, threshold=FUZZY_LOW_THRESHOLD
         )
         if not best_phrase or ratio < FUZZY_LOW_THRESHOLD:
+            continue
+
+        # Length-ratio guard: don't match a short candidate to a much longer phrase.
+        # E.g. "chest" (5 chars) should not match "congestion in chest" (18 chars).
+        candidate_words = len(candidate.split())
+        best_phrase_words = len(best_phrase.split())
+        if best_phrase_words > candidate_words + 2:
+            logger.debug(
+                "Fuzzy skip: '%s' (%d words) vs phrase '%s' (%d words) — length mismatch.",
+                candidate, candidate_words, best_phrase, best_phrase_words,
+            )
             continue
 
         canonical = get_canonical(best_phrase)
@@ -187,6 +209,7 @@ def extract_entities(
             duration=None,
             fuzzy_ratio=ratio,
         ))
+
 
     # ── Pass 3: Location enrichment for generic terms ─────────────────────
     # e.g. user says "pain in my arm" but "pain" alone doesn't resolve
