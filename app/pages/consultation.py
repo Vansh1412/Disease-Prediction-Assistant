@@ -439,14 +439,14 @@ div[data-testid="stChatInput"] textarea { color:#fff!important; font-family:'Int
         chips_cols = st.columns([1, 1, 1])
         prompt = None
         with chips_cols[0]:
-            if st.button("Chest feels tight", use_container_width=True, key="chip1"):
-                prompt = "My chest feels tight and heavy, and I feel nauseous."
+            if st.button("Chest is paining", use_container_width=True, key="chip1"):
+                prompt = "I have chest pain."
         with chips_cols[1]:
             if st.button("Throbbing headache", use_container_width=True, key="chip2"):
-                prompt = "I have a throbbing headache, stiff neck, and a light fever."
+                prompt = "I have a headache."
         with chips_cols[2]:
-            if st.button("Stomach pain & vomiting", use_container_width=True, key="chip3"):
-                prompt = "I've had severe stomach pain, acid reflux, and vomiting since yesterday."
+            if st.button("Stomach pain", use_container_width=True, key="chip3"):
+                prompt = "I have stomach pain."
 
         # Chat input
         user_input = st.chat_input("Describe how you are feeling...")
